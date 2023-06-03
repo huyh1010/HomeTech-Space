@@ -376,6 +376,6 @@
  */
 ```
 
-Entity Relationship Diagram
+## Entity Relationship Diagram
 
-![Entity Relationship Diagram](C:\Users\Huy\OneDrive\Desktop\Final Porject -BE\Entity Relationship Diagram [MConverter.eu].png "Entity Relationship Diagram")
+![Entity Relationship Diagram  MConverter eu](https://github.com/huyh1010/HomeTech-Space/assets/117617750/e802ed4f-ea18-40ba-8824-a18e3b68be71)
