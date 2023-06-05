@@ -18,7 +18,13 @@
 
 • This application provides a list of home device products labeled and grouped based on their category. User will automatically see a displayed UI feature of the product categorization which helps enhance their shopping experience. In each category, the application also provide a filtering section based on the product specification (ex: price, brand name, size, dimension or weight...).
 
-• This application also provides a webpage feature which display a list of grouping products (from different category) in a bundle at a reasonable price to allow the user to select and purchase without having to browse through other product webpage based on their category.
+• This application also provides a webpage feature which display a list of grouping products (from different category) in a bundle (product combo or package) at a reasonable price to allow the user to select and purchase without having to browse through other product webpage based on their category.
+
+• This application also contains a simple chat box between users to interact. 
+
+• An integration with third-party login providers (Google & Facebook) is included in the application.
+
+• This application contains a data visualization for seller(admin) to track the product status.
 
 • While the HomeTech Space does provide a viable choice for user to browse through products, we hope to implement a "popular section" feature to allow customer to look at the platform's best-selling product. We also hope to build a customization webpage feature that allows user to select their product from scratch. While our bundle options does provide somewhat similar feature, the products in the bundle are pre-selected by the store and user are not allowed to adjust and select their own preferred product in the bundle. It would be amazing to also include a customer's review section for product reviews.
 
@@ -303,6 +309,7 @@
 /**
  * @route GET /orders/:id
  * @description Get an order
+ * @param {id}
  * @body
  * @access Login required
  */
@@ -312,6 +319,7 @@
 /**
  * @route PUT /orders/:id
  * @description Update an order
+ * @param {id}
  * @body {status}
  * @access Login required, admin only
  */
@@ -321,6 +329,7 @@
 /**
  * @route DELETE /orders/:id
  * @description Cancel an order
+ * @param {id}
  * @body {status}
  * @access Login required, admin only
  */
@@ -378,4 +387,5 @@
 
 ## Entity Relationship Diagram
 
-![Entity Relationship Diagram  MConverter eu](https://github.com/huyh1010/HomeTech-Space/assets/117617750/e802ed4f-ea18-40ba-8824-a18e3b68be71)
+![Entity Relationship Diagram (2)  MConverter eu](https://github.com/huyh1010/HomeTech-Space/assets/117617750/b44b2ff7-d6e0-4057-acb3-b9aceba73066)
+
