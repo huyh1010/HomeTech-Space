@@ -331,7 +331,7 @@
  * @description Cancel an order
  * @param {id}
  * @body {status}
- * @access Login required, admin only
+ * @access Login required
  */
 ```
 
