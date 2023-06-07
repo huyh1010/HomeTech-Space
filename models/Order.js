@@ -20,7 +20,8 @@ const orderSchema = mongoose.Schema(
       default: "pending",
     },
     bundle: { type: Schema.Types.ObjectId, ref: "ProductBundle" },
-    is_Cancel: { type: Boolean, default: "false" },
+    is_Cancel: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -6,6 +6,7 @@ const productSchema = mongoose.Schema(
     price: { type: Number, required: true },
     category: {
       type: String,
+      required: true,
       enum: [
         "speaker",
         "plugs and outlets",
@@ -17,10 +18,11 @@ const productSchema = mongoose.Schema(
     },
     brand: { type: String },
     dimension_size: { type: String },
-    weight: { type: String },
+    weight_kg: { type: Number },
     description: { type: String },
-    imageUrl: { type: String },
-    feature: { type: [String] },
+    imageUrl: { type: [String] },
+    features: { type: [String] },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

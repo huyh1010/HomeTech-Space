@@ -5,6 +5,7 @@ const categorySchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     products: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
