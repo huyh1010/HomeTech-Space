@@ -1,14 +1,33 @@
 const express = require("express");
 const categoryController = require("../controllers/category.controller");
+const authentication = require("../middleware/authentication");
+const validators = require("../middleware/validators");
+const { body } = require("express-validator");
 const router = express.Router();
 
 /**
  * @route POST /categories
  * @description Create a list of categories
- * @body {name, products}
+ * @body {name}
  * @access Login required, admin only
  */
-router.post("/", categoryController.createCategory);
+router.post(
+  "/",
+  authentication.loginRequired,
+  validators.validate([
+    body("name", "Invalid name")
+      .exists()
+      .isIn([
+        "speaker",
+        "plugs and outlets",
+        "security cameras and systems",
+        "lighting",
+        "alarm clock",
+        "scale",
+      ]),
+  ]),
+  categoryController.createCategory
+);
 
 /**
  * @route GET /categories
