@@ -35,30 +35,94 @@ categoryController.createCategory = catchAsync(async (req, res, next) => {
 });
 
 categoryController.getCategories = catchAsync(async (req, res, next) => {
-  //Get data from request
-  //Validation
-  //Process
-  //Response
+  let { page, limit, ...filter } = { ...req.query };
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 10;
+
+  const filterConditions = [{ isDeleted: false }];
+  if (filter.name) {
+    filterConditions.push({ name: { $regex: filter.name, $options: "i" } });
+  }
+  const filterCriteria = filterConditions.length
+    ? { $and: filterConditions }
+    : {};
+
+  const count = await Category.countDocuments(filterCriteria);
+  const totalPages = Math.ceil(count / limit);
+  const offset = limit * (page - 1);
+
+  let categories = await Category.find(filterCriteria)
+    .sort({ createdAt: -1 })
+    .skip(offset)
+    .limit(limit)
+    .populate("products");
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { categories, totalPages, count },
+    null,
+    ""
+  );
 });
 
 categoryController.getSingleCategory = catchAsync(async (req, res, next) => {
   //Get data from request
+  const categoryId = req.params.id;
+  const category = await Category.findById(categoryId)
+    .populate("products")
+    .sort({ createdAt: -1 });
   //Validation
+  if (!category)
+    throw new AppError(400, "Category not found", "Get Category Error");
   //Process
   //Response
+  return sendResponse(
+    res,
+    200,
+    true,
+    { category },
+    null,
+    "Get Single Category Successful"
+  );
 });
 
-categoryController.updateCategory = catchAsync(async (req, res, next) => {
-  //Get data from request
-  //Validation
-  //Process
-  //Response
-});
+// categoryController.updateCategory = catchAsync(async (req, res, next) => {
+//   //Get data from request
+
+//   //Validation
+
+//   //Process
+//   //Response
+// });
 
 categoryController.deleteCategory = catchAsync(async (req, res, next) => {
+  const currentUserId = req.userId;
   //Get data from request
+  const categoryId = req.params.id;
   //Validation
+  const user = await User.findById(currentUserId);
+  if (user.role !== "admin")
+    throw new AppError(400, "Permission required", "Delete Category Error");
+
   //Process
+  const category = await Product.findOneAndUpdate(
+    { _id: categoryId },
+    { isDeleted: true },
+    { new: true }
+  );
+
+  if (!category)
+    throw new AppError(400, "Category not found", "Delete Category Error");
   //Response
+  return sendResponse(
+    res,
+    200,
+    true,
+    { category },
+    null,
+    "Delete Category Successful"
+  );
 });
 module.exports = categoryController;

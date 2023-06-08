@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const productBundleSchema = mongoose.Schema(
   {
+    name: { type: String },
     products: { type: [Schema.Types.ObjectId], required: true, ref: "Product" },
     isDeleted: { type: Boolean, default: false },
   },

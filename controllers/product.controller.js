@@ -7,7 +7,7 @@ const productController = {};
 productController.getProducts = catchAsync(async (req, res, next) => {
   let { page, limit, ...filter } = { ...req.query };
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 3;
+  limit = parseInt(limit) || 10;
 
   const filterConditions = [{ isDeleted: false }];
   if (filter.name) {

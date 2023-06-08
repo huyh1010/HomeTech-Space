@@ -2,7 +2,7 @@ const express = require("express");
 const categoryController = require("../controllers/category.controller");
 const authentication = require("../middleware/authentication");
 const validators = require("../middleware/validators");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const router = express.Router();
 
 /**
@@ -35,7 +35,7 @@ router.post(
  * @body
  * @access Login required
  */
-router.get("/", categoryController.getCategories);
+router.get("/", authentication.loginRequired, categoryController.getCategories);
 
 /**
  * @route GET /categories/:id
@@ -44,7 +44,14 @@ router.get("/", categoryController.getCategories);
  * @body
  * @access Login required
  */
-router.get("/:id", categoryController.getSingleCategory);
+router.get(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  categoryController.getSingleCategory
+);
 
 /**
  * @route PUT /categories/:id
@@ -53,7 +60,14 @@ router.get("/:id", categoryController.getSingleCategory);
  * @body {name}
  * @access Login required, admin only
  */
-router.put("/:id", categoryController.updateCategory);
+// router.put(
+//   "/:id",
+//   authentication.loginRequired,
+//   validators.validate([
+//     param("id").exists().isString().custom(validators.checkObjectId),
+//   ]),
+//   categoryController.updateCategory
+// );
 
 /**
  * @route DELETE /categories/:id
@@ -62,6 +76,13 @@ router.put("/:id", categoryController.updateCategory);
  * @body {name}
  * @access Login required, admin only
  */
-router.delete("/:id", categoryController.deleteCategory);
+router.delete(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  categoryController.deleteCategory
+);
 
 module.exports = router;
