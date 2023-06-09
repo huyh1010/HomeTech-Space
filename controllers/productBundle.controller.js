@@ -6,6 +6,7 @@ const User = require("../models/User");
 const productBundleController = {};
 
 productBundleController.createProductBundle = catchAsync(
+  // add product id instead of randomly generate id
   async (req, res, next) => {
     //Get data from request
     const currentUserId = req.userId;

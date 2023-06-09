@@ -28,7 +28,7 @@ userController.register = catchAsync(async (req, res, next) => {
 });
 
 userController.getCurrentUser = catchAsync(async (req, res, next) => {
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
 
   const user = await User.findById(currentUserId);
   if (!user)
@@ -44,8 +44,10 @@ userController.getCurrentUser = catchAsync(async (req, res, next) => {
   );
 });
 
+//userController.getUser
+
 userController.updateUser = catchAsync(async (req, res, next) => {
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
   const userId = req.params.id;
 
   if (currentUserId !== userId)

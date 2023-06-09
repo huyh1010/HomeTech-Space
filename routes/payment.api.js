@@ -1,14 +1,17 @@
 const express = require("express");
 const paymentController = require("../controllers/payment.controller");
+const authentication = require("../middleware/authentication");
+const { param } = require("express-validator");
+const validators = require("../middleware/validators");
 const router = express.Router();
 
 /**
  * @route POST /payments
  * @description Create a payment
- * @body {order, status}
+ * @body {order}
  * @access Login required, admin only
  */
-router.post("/", paymentController.createPayment);
+router.post("/", authentication.loginRequired, paymentController.createPayment);
 
 /**
  * @route GET /payments
@@ -16,7 +19,7 @@ router.post("/", paymentController.createPayment);
  * @body
  * @access Login required
  */
-router.get("/", paymentController.getPayments);
+router.get("/", authentication.loginRequired, paymentController.getPayments);
 
 /**
  * @route GET /payments/:id
@@ -25,7 +28,14 @@ router.get("/", paymentController.getPayments);
  * @body
  * @access Login required
  */
-router.get("/:id", paymentController.getSinglePayment);
+router.get(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  paymentController.getSinglePayment
+);
 
 /**
  * @route PUT /payments/:id
@@ -34,7 +44,14 @@ router.get("/:id", paymentController.getSinglePayment);
  * @body {status}
  * @access Login required, admin only
  */
-router.put("/:id", paymentController.updatePayment);
+router.put(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  paymentController.updatePayment
+);
 
 /**
  * @route DELETE /payments/:id
@@ -43,6 +60,13 @@ router.put("/:id", paymentController.updatePayment);
  * @body
  * @access Login required, admin only
  */
-router.delete("/:id", paymentController.deletePayment);
+router.delete(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  paymentController.deletePayment
+);
 
 module.exports = router;

@@ -13,6 +13,7 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   if (filter.name) {
     filterConditions.push({ name: { $regex: filter.name, $options: "i" } });
   }
+  //add logic for multiple filter conditions
   const filterCriteria = filterConditions.length
     ? { $and: filterConditions }
     : {};

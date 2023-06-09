@@ -26,7 +26,7 @@ router.post(
 );
 
 /**
- * @route GET /users/me
+ * @route GET /users/:id
  * @description Get current user info
  * @body
  * @access Login required

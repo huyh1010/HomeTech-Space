@@ -31,7 +31,7 @@ router.post(
 
 /**
  * @route GET /categories
- * @description Create a list of categories
+ * @description Get all categories
  * @body
  * @access Login required
  */
@@ -39,7 +39,7 @@ router.get("/", authentication.loginRequired, categoryController.getCategories);
 
 /**
  * @route GET /categories/:id
- * @description Get single category (*note: with arrays of products)
+ * @description Get single category
  * @param {id}
  * @body
  * @access Login required
