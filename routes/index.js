@@ -45,6 +45,10 @@ router.use("/categories", categoryRouter);
 const orderRouter = require("./order.api.js");
 router.use("/orders", orderRouter);
 
-const paymentRouter = require("./payment.api.js");
-router.use("/payments", paymentRouter);
+const cartRouter = require("./cart.api.js");
+router.use("/carts", cartRouter);
+
+const productBundleCartRouter = require("./productBundleCart.api");
+router.use("/bundlecarts", productBundleCartRouter);
+
 module.exports = router;

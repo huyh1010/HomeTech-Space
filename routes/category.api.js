@@ -57,17 +57,17 @@ router.get(
  * @route PUT /categories/:id
  * @description Update a single category by name
  * @param {id}
- * @body {name}
+ * @body {name, coverImgUrl}
  * @access Login required, admin only
  */
-// router.put(
-//   "/:id",
-//   authentication.loginRequired,
-//   validators.validate([
-//     param("id").exists().isString().custom(validators.checkObjectId),
-//   ]),
-//   categoryController.updateCategory
-// );
+router.put(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  categoryController.updateCategory
+);
 
 /**
  * @route DELETE /categories/:id

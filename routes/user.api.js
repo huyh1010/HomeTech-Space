@@ -26,13 +26,34 @@ router.post(
 );
 
 /**
- * @route GET /users/:id
+ * @route GET /users/me
  * @description Get current user info
  * @body
  * @access Login required
  */
 
-router.get("/me", authentication.loginRequired, userController.getCurrentUser);
+router.get(
+  "/me",
+  authentication.loginRequired,
+
+  userController.getCurrentUser
+);
+
+/**
+ * @route GET /users/:id
+ * @description Get user info
+ * @body
+ * @access Login required
+ */
+
+router.get(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  userController.getUser
+);
 
 /**
  * @route PUT /users/:id

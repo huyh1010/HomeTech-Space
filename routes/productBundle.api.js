@@ -49,7 +49,7 @@ router.get(
  * @route PUT /bundles/:id
  * @description Update product bundle
  * @param {id}
- * @body {name}
+ * @body {name, products}
  * @access Login required, admin only
  */
 router.put(

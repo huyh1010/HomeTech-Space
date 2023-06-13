@@ -10,14 +10,37 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   limit = parseInt(limit) || 10;
 
   const filterConditions = [{ isDeleted: false }];
+
+  // if (filter) {
+  //   const filterKeys = Object.keys(filter);
+  //   filterKeys.forEach((key) => {
+  //     if (key === "price" || "weight_kg") {
+  //       const numberTypes = parseFloat(filter[key]);
+  //       filterConditions.push({ [key]: numberTypes });
+  //     } else if (
+  //       key === "name" ||
+  //       "category" ||
+  //       "brand" ||
+  //       "dimension_size" ||
+  //       "description"
+  //     ) {
+  //       const stringTypes = filter[key];
+  //       filterConditions.push({
+  //         [key]: { $regex: `${stringTypes}`, $options: "i" },
+  //       });
+  //     }
+  //   });
+  // }
   if (filter.name) {
-    filterConditions.push({ name: { $regex: filter.name, $options: "i" } });
+    filterConditions.push({
+      name: { $regex: filter.name, $options: "i" },
+    });
   }
-  //add logic for multiple filter conditions
+
   const filterCriteria = filterConditions.length
     ? { $and: filterConditions }
     : {};
-
+  console.log(filterCriteria);
   const count = await Product.countDocuments(filterCriteria);
   const totalPages = Math.ceil(count / limit);
   const offset = limit * (page - 1);
@@ -38,7 +61,7 @@ productController.getProducts = catchAsync(async (req, res, next) => {
 });
 
 productController.createProduct = catchAsync(async (req, res, next) => {
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
   //Get data from request
   const {
     name,
@@ -100,7 +123,7 @@ productController.getSingleProduct = catchAsync(async (req, res, next) => {
 
 productController.updateProduct = catchAsync(async (req, res, next) => {
   //Get data from request
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
   const productId = req.params.id;
 
   //Validation
@@ -143,7 +166,7 @@ productController.updateProduct = catchAsync(async (req, res, next) => {
 });
 
 productController.deleteProduct = catchAsync(async (req, res, next) => {
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
   //Get data from request
   const productId = req.params.id;
   //Validation

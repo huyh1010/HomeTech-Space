@@ -44,7 +44,14 @@ userController.getCurrentUser = catchAsync(async (req, res, next) => {
   );
 });
 
-//userController.getUser
+userController.getUser = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+
+  const user = await User.findById(userId);
+  if (!user) throw new AppError(400, "User not found", "Get User Error");
+
+  return sendResponse(res, 200, true, { user }, null, "Get User Successful");
+});
 
 userController.updateUser = catchAsync(async (req, res, next) => {
   const currentUserId = req.user_id;

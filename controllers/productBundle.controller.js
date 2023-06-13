@@ -9,8 +9,8 @@ productBundleController.createProductBundle = catchAsync(
   // add product id instead of randomly generate id
   async (req, res, next) => {
     //Get data from request
-    const currentUserId = req.userId;
-    const { name } = req.body;
+    const currentUserId = req.user_id;
+    const { name, products, price } = req.body;
     //Validation
     const user = await User.findById(currentUserId);
     if (user.role !== "admin")
@@ -20,10 +20,8 @@ productBundleController.createProductBundle = catchAsync(
     if (bundle)
       throw new AppError(400, "Bundle already exists", "Create Bundle Error");
     //Process
-    bundle = await ProductBundle.create({ name });
-    const getFiveProducts = await Product.aggregate([{ $sample: { size: 5 } }]);
-    bundle.products = getFiveProducts;
-    bundle = await bundle.save();
+    bundle = await ProductBundle.create({ name, products, price });
+
     //Response
     sendResponse(res, 200, true, { bundle }, null, "Create Bundle Successful");
   }
@@ -88,10 +86,10 @@ productBundleController.getSingleProductBundle = catchAsync(
 
 productBundleController.updateProductBundle = catchAsync(
   async (req, res, next) => {
-    const currentUserId = req.userId;
+    const currentUserId = req.user_id;
     const bundleId = req.params.id;
     //Get data from request
-    const { name } = req.body;
+    const { name, products, price } = req.body;
     //Validation
     const user = await User.findById(currentUserId);
     if (user.role !== "admin")
@@ -100,7 +98,7 @@ productBundleController.updateProductBundle = catchAsync(
     //Process
     const bundle = await ProductBundle.findOneAndUpdate(
       { _id: bundleId },
-      { name: name },
+      { name: name, products: products, price: price },
       { new: true }
     );
 
@@ -119,7 +117,7 @@ productBundleController.updateProductBundle = catchAsync(
 productBundleController.deleteProductBundle = catchAsync(
   async (req, res, next) => {
     //Get data from request
-    const currentUserId = req.userId;
+    const currentUserId = req.user_id;
     const bundleId = req.params.id;
     //Validation
     const user = await User.findById(currentUserId);
