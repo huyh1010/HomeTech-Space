@@ -1,6 +1,8 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
+const ProductBundle = require("../models/ProductBundle");
+
 const User = require("../models/User");
 
 const cartController = {};
@@ -18,6 +20,85 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
   const cart = await Cart.findOne({ user: userId });
 
   const productDetails = await Product.findById(product_id);
+
+  if (cart) {
+    let itemIndex = cart.items.findIndex(
+      (item) => item.productId == product_id
+    );
+    console.log("Index", itemIndex);
+
+    if (itemIndex > -1) {
+      cart.items[itemIndex].quantity =
+        cart.items[itemIndex].quantity + quantity;
+      cart.items[itemIndex].price = productDetails.price;
+      cart.items[itemIndex].total =
+        cart.items[itemIndex].quantity * productDetails.price;
+      cart.subTotal = cart.items
+        .map((item) => item.total)
+        .reduce((acc, curr) => acc + curr);
+      cart.total = parseFloat(
+        cart.subTotal + cart.tax_fees + cart.shipping_fees
+      ).toFixed(2);
+    } else if (quantity > 0) {
+      cart.items.push({
+        productId: product_id,
+        quantity: quantity,
+        price: productDetails.price,
+        total: parseFloat(productDetails.price * quantity).toFixed(2),
+      });
+      cart.subTotal = cart.items
+        .map((item) => item.total)
+        .reduce((acc, curr) => acc + curr)
+        .toFixed(2);
+      cart.total = parseFloat(
+        cart.subTotal + cart.tax_fees + cart.shipping_fees
+      ).toFixed(2);
+    } else {
+      throw new AppError(400, "Invalid Request", "Add Item To Cart Error");
+    }
+    let data = await cart.save();
+    sendResponse(res, 200, true, { data }, null, "Add Item To Cart Successful");
+  } else {
+    const cartData = {
+      user: userId,
+      items: [
+        {
+          productId: product_id,
+          quantity: quantity,
+          price: productDetails.price,
+          total: parseFloat(productDetails.price * quantity),
+        },
+      ],
+      subTotal: parseFloat(productDetails.price * quantity).toFixed(2),
+      total: parseFloat(
+        productDetails.price * quantity + shipping_fees + tax
+      ).toFixed(2),
+    };
+    const newCart = await Cart.create(cartData);
+    newCart.total = sendResponse(
+      res,
+      200,
+      true,
+      { newCart },
+      null,
+      "Add Item To Cart Successful"
+    );
+  }
+});
+
+cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
+  //get data
+  let { product_id, quantity } = req.body;
+  const userId = req.user_id;
+
+  quantity = Number.parseInt(quantity);
+  const shipping_fees = 4.99;
+  const tax = 1.49;
+
+  //validation
+  const cart = await Cart.findOne({ user: userId });
+
+  const productDetails = await ProductBundle.findById(product_id);
 
   if (cart) {
     let itemIndex = cart.items.findIndex(

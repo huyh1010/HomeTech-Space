@@ -21,6 +21,21 @@ router.post(
 );
 
 /**
+ * @route POST /carts/bundle
+ * @description Add product bundle to cart
+ * @body {product_id, quantity}
+ * @access Login required
+ */
+router.post(
+  "/bundle",
+  authentication.loginRequired,
+  validators.validate([
+    body("product_id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  cartController.addBundleItemToCart
+);
+
+/**
  * @route GET /carts/:id
  * @description Get User Cart
  * @param {id}

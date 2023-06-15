@@ -8,21 +8,21 @@ const router = express.Router();
 /**
  * @route POST /orders
  * @description Create an order
- * @body {buyer, shipping address, payment method}
+ * @body {buyer, shipping address, payment method, cart}
  * @access Login required
  */
 router.post(
   "/",
   authentication.loginRequired,
   validators.validate([
-    body("buyer", "Invalid buyer")
-      .exists()
-      .isString()
-      .custom(validators.checkObjectId),
     body("shipping_address", "Invalid address").exists().isString(),
     body("payment_method", "Invalid payment method")
       .exists()
       .isIn(["credit/debit", "COD"]),
+    body("cartId", "Invalid cart")
+      .exists()
+      .isString()
+      .custom(validators.checkObjectId),
   ]),
   orderController.createOrder
 );

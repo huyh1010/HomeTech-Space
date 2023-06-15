@@ -3,7 +3,9 @@ const Schema = mongoose.Schema;
 
 let itemSchema = new Schema(
   {
-    productId: { type: Schema.Types.ObjectId, ref: "Product" },
+    productId: {
+      type: Schema.Types.ObjectId,
+    },
     quantity: { type: Number, required: true, min: [1] },
     price: { type: Number, required: true },
     total: { type: Number, required: true },

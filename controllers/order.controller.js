@@ -1,21 +1,27 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
+const Cart = require("../models/Cart");
 const Order = require("../models/Order");
 const User = require("../models/User");
 
 const orderController = {};
 
 orderController.createOrder = catchAsync(async (req, res, next) => {
-  const { buyer, products, shipping_address, payment_method, bundle } =
-    req.body;
+  const { shipping_address, payment_method, cartId } = req.body;
+  const userId = req.user_id;
 
-  const order = await Order.create({
-    buyer,
-    products,
-    shipping_address,
-    payment_method,
-    bundle,
+  const cart = await Cart.findOne({ _id: cartId, user: userId });
+  let order = await Order.findOne({ buyer: userId, cart: cartId });
+  if (order)
+    throw new AppError(400, "Order already exist", "Create Order Error");
+  order = await Order.create({
+    buyer: userId,
+    shipping_address: shipping_address,
+    payment_method: payment_method,
+    cart: cartId,
   });
 
+  order.total = cart.total;
+  order = await order.save();
   sendResponse(res, 200, true, { order }, null, "Create Order Successful");
 });
 
@@ -45,14 +51,12 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
     .skip(offset)
     .limit(limit)
     .populate("buyer")
-    .populate("products")
-    .populate("bundle");
-
+    .populate("cart");
   return sendResponse(res, 200, true, { orders, totalPages, count }, null, "");
 });
 
 orderController.getCurrentUserOrders = catchAsync(async (req, res, next) => {
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
   let { page, limit, ...filter } = { ...req.query };
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
@@ -74,9 +78,7 @@ orderController.getCurrentUserOrders = catchAsync(async (req, res, next) => {
     .skip(offset)
     .limit(limit)
     .populate("buyer")
-    .populate("products")
-    .populate("bundle");
-
+    .populate("cart");
   if (!order) throw new AppError(400, "Order not found", "Get My Order Error");
   return sendResponse(
     res,
@@ -92,9 +94,7 @@ orderController.getSingleOrder = catchAsync(async (req, res, next) => {
   const orderId = req.params.id;
   const order = await Order.findById(orderId)
     .populate("buyer")
-    .populate("products")
-    .populate("bundle");
-
+    .populate("cart");
   //Validation
   if (!order) throw new AppError(400, "Order not found", "Get Order Error");
 
@@ -112,7 +112,7 @@ orderController.getSingleOrder = catchAsync(async (req, res, next) => {
 
 orderController.updateOrder = catchAsync(async (req, res, next) => {
   //Get data from request
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
   const orderId = req.params.id;
   const { status, payment_status } = req.body;
   //Validation
@@ -154,7 +154,7 @@ orderController.updateOrder = catchAsync(async (req, res, next) => {
 });
 
 orderController.deleteOrder = catchAsync(async (req, res, next) => {
-  const currentUserId = req.userId;
+  const currentUserId = req.user_id;
   //Get data from request
   const orderId = req.params.id;
   //Validation

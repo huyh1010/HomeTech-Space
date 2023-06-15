@@ -48,7 +48,4 @@ router.use("/orders", orderRouter);
 const cartRouter = require("./cart.api.js");
 router.use("/carts", cartRouter);
 
-const productBundleCartRouter = require("./productBundleCart.api");
-router.use("/bundlecarts", productBundleCartRouter);
-
 module.exports = router;

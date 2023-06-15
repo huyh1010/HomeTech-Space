@@ -15,8 +15,7 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   //   const filterKeys = Object.keys(filter);
   //   filterKeys.forEach((key) => {
   //     if (key === "price" || "weight_kg") {
-  //       const numberTypes = parseFloat(filter[key]);
-  //       filterConditions.push({ [key]: numberTypes });
+  //       filterConditions.push({ [key]: parseFloat(filter[key]) });
   //     } else if (
   //       key === "name" ||
   //       "category" ||
@@ -24,13 +23,13 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   //       "dimension_size" ||
   //       "description"
   //     ) {
-  //       const stringTypes = filter[key];
   //       filterConditions.push({
-  //         [key]: { $regex: `${stringTypes}`, $options: "i" },
+  //         [key]: { $regex: `${filter[key]}`, $options: "i" },
   //       });
   //     }
   //   });
   // }
+
   if (filter.name) {
     filterConditions.push({
       name: { $regex: filter.name, $options: "i" },
