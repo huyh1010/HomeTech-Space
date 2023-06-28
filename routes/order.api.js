@@ -19,10 +19,6 @@ router.post(
     body("payment_method", "Invalid payment method")
       .exists()
       .isIn(["credit/debit", "COD"]),
-    body("cartId", "Invalid cart")
-      .exists()
-      .isString()
-      .custom(validators.checkObjectId),
   ]),
   orderController.createOrder
 );
@@ -92,7 +88,7 @@ router.delete(
   validators.validate([
     param("id").exists().isString().custom(validators.checkObjectId),
   ]),
-  orderController.deleteOrder
+  orderController.cancelOrder
 );
 
 module.exports = router;

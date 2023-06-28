@@ -10,7 +10,11 @@ const userSchema = mongoose.Schema(
     avatarUrl: { type: String, required: false, default: "" },
     address: { type: String, required: false, default: "" },
     phone: { type: String, required: false, default: "" },
-    role: { type: String, required: true, enum: ["admin", "user"] },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }

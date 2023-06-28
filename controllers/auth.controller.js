@@ -21,7 +21,7 @@ authController.signIn = catchAsync(async (req, res, next) => {
     true,
     { user, accessToken },
     null,
-    "Create User Successful"
+    "Log In Successful"
   );
 });
 

@@ -28,5 +28,13 @@ const cartSchema = new Schema(
   { timestamps: true }
 );
 
+cartSchema.methods.clearCart = function () {
+  this.items = [];
+  this.total = 0;
+  this.subtotal = 0;
+  this.tax_fees = 0;
+  this.shipping_fees = 0;
+  return this.save();
+};
 const Cart = mongoose.model("Cart", cartSchema);
 module.exports = Cart;

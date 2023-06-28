@@ -9,19 +9,18 @@ orderController.createOrder = catchAsync(async (req, res, next) => {
   const { shipping_address, payment_method, cartId } = req.body;
   const userId = req.user_id;
 
-  const cart = await Cart.findOne({ _id: cartId, user: userId });
-  let order = await Order.findOne({ buyer: userId, cart: cartId });
-  if (order)
-    throw new AppError(400, "Order already exist", "Create Order Error");
+  let order = await Order.findById(userId);
+  let cart = await Cart.findOne({ user: userId, _id: cartId });
+
+  if (!cart) throw new AppError(400, "Items not found", "Create Order Error");
+
   order = await Order.create({
     buyer: userId,
+    productList: cartId,
     shipping_address: shipping_address,
     payment_method: payment_method,
-    cart: cartId,
   });
 
-  order.total = cart.total;
-  order = await order.save();
   sendResponse(res, 200, true, { order }, null, "Create Order Successful");
 });
 
@@ -51,7 +50,11 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
     .skip(offset)
     .limit(limit)
     .populate("buyer")
-    .populate("cart");
+    .populate({
+      path: "productList",
+      populate: { path: "productId", model: "Product" },
+    });
+
   return sendResponse(res, 200, true, { orders, totalPages, count }, null, "");
 });
 
@@ -78,7 +81,14 @@ orderController.getCurrentUserOrders = catchAsync(async (req, res, next) => {
     .skip(offset)
     .limit(limit)
     .populate("buyer")
-    .populate("cart");
+    .populate({
+      path: "productList",
+      populate: {
+        path: "items",
+        populate: { path: "productId", model: "Product" },
+      },
+    });
+
   if (!order) throw new AppError(400, "Order not found", "Get My Order Error");
   return sendResponse(
     res,
@@ -94,7 +104,11 @@ orderController.getSingleOrder = catchAsync(async (req, res, next) => {
   const orderId = req.params.id;
   const order = await Order.findById(orderId)
     .populate("buyer")
-    .populate("cart");
+    .populate({
+      path: "productList",
+      populate: { path: "productId", model: "Product" },
+    });
+
   //Validation
   if (!order) throw new AppError(400, "Order not found", "Get Order Error");
 
@@ -153,7 +167,7 @@ orderController.updateOrder = catchAsync(async (req, res, next) => {
   );
 });
 
-orderController.deleteOrder = catchAsync(async (req, res, next) => {
+orderController.cancelOrder = catchAsync(async (req, res, next) => {
   const currentUserId = req.user_id;
   //Get data from request
   const orderId = req.params.id;

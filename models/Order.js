@@ -4,13 +4,18 @@ const Schema = mongoose.Schema;
 const orderSchema = mongoose.Schema(
   {
     buyer: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+    productList: {
+      type: Schema.Types.ObjectId,
+      ref: "Cart",
+    },
+
     shipping_address: { type: String, required: true },
     payment_method: {
       type: String,
       enum: ["credit/debit", "COD"],
       required: true,
     },
-    cart: { type: Schema.Types.ObjectId, required: true, ref: "Cart" },
+
     total: { type: Number },
     status: {
       type: String,

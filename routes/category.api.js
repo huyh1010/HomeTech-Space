@@ -33,20 +33,19 @@ router.post(
  * @route GET /categories
  * @description Get all categories
  * @body
- * @access Login required
+ * @access Public
  */
-router.get("/", authentication.loginRequired, categoryController.getCategories);
+router.get("/", categoryController.getCategories);
 
 /**
  * @route GET /categories/:id
  * @description Get single category
  * @param {id}
  * @body
- * @access Login required
+ * @access Public
  */
 router.get(
   "/:id",
-  authentication.loginRequired,
   validators.validate([
     param("id").exists().isString().custom(validators.checkObjectId),
   ]),

@@ -24,11 +24,7 @@ router.post(
  * @body
  * @access Login required
  */
-router.get(
-  "/",
-  authentication.loginRequired,
-  productBundleController.getProductBundles
-);
+router.get("/", productBundleController.getProductBundles);
 
 /**
  * @route GET /bundles/:id
@@ -38,7 +34,6 @@ router.get(
  */
 router.get(
   "/:id",
-  authentication.loginRequired,
   validators.validate([
     param("id").exists().isString().custom(validators.checkObjectId),
   ]),

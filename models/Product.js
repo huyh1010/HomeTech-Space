@@ -20,6 +20,7 @@ const productSchema = mongoose.Schema(
     dimension_size: { type: String },
     weight_kg: { type: Number },
     description: { type: String },
+    poster_path: { type: String },
     imageUrl: { type: [String] },
     features: { type: [String] },
     isDeleted: { type: Boolean, default: false },

@@ -9,9 +9,9 @@ const router = express.Router();
  * @route GET /products
  * @description Get a list of products
  * @body
- * @access Login required
+ * @access Public
  */
-router.get("/", authentication.loginRequired, productController.getProducts);
+router.get("/", productController.getProducts);
 
 /**
  * @route POST /products
@@ -43,11 +43,10 @@ router.post(
  * @route GET /products/:id
  * @description Get a single product by ID.
  * @param {id}
- * @access Login required
+ * @access Public
  */
 router.get(
   "/:id",
-  authentication.loginRequired,
   validators.validate([
     param("id").exists().isString().custom(validators.checkObjectId),
   ]),

@@ -20,7 +20,6 @@ router.post(
       .isEmail()
       .normalizeEmail({ gmail_remove_dots: false }),
     body("password", "Invalid password").exists().notEmpty(),
-    body("role", "Invalid Role").exists().isIn(["admin", "user"]),
   ]),
   userController.register
 );

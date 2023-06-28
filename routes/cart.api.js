@@ -23,7 +23,7 @@ router.post(
 /**
  * @route POST /carts/bundle
  * @description Add product bundle to cart
- * @body {product_id, quantity}
+ * @body {product_id, quantity, type}
  * @access Login required
  */
 router.post(
@@ -31,6 +31,7 @@ router.post(
   authentication.loginRequired,
   validators.validate([
     body("product_id").exists().isString().custom(validators.checkObjectId),
+    body("type", "Invalid type").exists().isIn(["regular", "bundle"]),
   ]),
   cartController.addBundleItemToCart
 );
@@ -81,4 +82,5 @@ router.delete(
   ]),
   cartController.removeItemFromCart
 );
+
 module.exports = router;

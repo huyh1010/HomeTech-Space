@@ -9,7 +9,7 @@ const cartController = {};
 
 cartController.addItemToCart = catchAsync(async (req, res, next) => {
   //get data
-  let { product_id, quantity } = req.body;
+  let { product_id, quantity, type } = req.body;
   const userId = req.user_id;
 
   quantity = Number.parseInt(quantity);
@@ -45,6 +45,7 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
         quantity: quantity,
         price: productDetails.price,
         total: parseFloat(productDetails.price * quantity).toFixed(2),
+        type: type,
       });
       cart.subTotal = cart.items
         .map((item) => item.total)
@@ -67,6 +68,7 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
           quantity: quantity,
           price: productDetails.price,
           total: parseFloat(productDetails.price * quantity),
+          type: type,
         },
       ],
       subTotal: parseFloat(productDetails.price * quantity).toFixed(2),
@@ -88,7 +90,7 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
 
 cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
   //get data
-  let { product_id, quantity } = req.body;
+  let { product_id, quantity, type } = req.body;
   const userId = req.user_id;
 
   quantity = Number.parseInt(quantity);
@@ -124,6 +126,7 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
         quantity: quantity,
         price: productDetails.price,
         total: parseFloat(productDetails.price * quantity).toFixed(2),
+        type: type,
       });
       cart.subTotal = cart.items
         .map((item) => item.total)
@@ -146,6 +149,7 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
           quantity: quantity,
           price: productDetails.price,
           total: parseFloat(productDetails.price * quantity),
+          type: type,
         },
       ],
       subTotal: parseFloat(productDetails.price * quantity).toFixed(2),
@@ -170,7 +174,12 @@ cartController.getUserCart = catchAsync(async (req, res, next) => {
   let user = await User.findById(userId);
   if (!user) throw new AppError(400, "Invalid User ID", "Get Cart Error");
 
-  let cart = await Cart.findOne({ user: userId }).populate("user");
+  let cart = await Cart.findOne({ user: userId })
+    .populate("user")
+    .populate({
+      path: "items",
+      populate: { path: "productId", model: "Product" },
+    });
   if (!cart) throw new AppError(400, "Cart not found", "Get Cart Error");
 
   sendResponse(res, 200, true, { cart }, null, "Get Cart Successful");

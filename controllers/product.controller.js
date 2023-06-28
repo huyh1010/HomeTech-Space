@@ -8,31 +8,34 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   let { page, limit, ...filter } = { ...req.query };
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
+  // else if (key === "price") {
+  //   if () {
+  //     filterConditions.push({ [key]: { $lt: 25 } });
+  //   } else if () {
+  //     filterConditions.push({ [key]: { $lt: 75, $gt: 25 } });
+  //   } else {
+  //     filterConditions.push({ [key]: { $gt: 75 } });
+  //   }
+  // }
 
   const filterConditions = [{ isDeleted: false }];
 
-  // if (filter) {
-  //   const filterKeys = Object.keys(filter);
-  //   filterKeys.forEach((key) => {
-  //     if (key === "price" || "weight_kg") {
-  //       filterConditions.push({ [key]: parseFloat(filter[key]) });
-  //     } else if (
-  //       key === "name" ||
-  //       "category" ||
-  //       "brand" ||
-  //       "dimension_size" ||
-  //       "description"
-  //     ) {
-  //       filterConditions.push({
-  //         [key]: { $regex: `${filter[key]}`, $options: "i" },
-  //       });
-  //     }
-  //   });
-  // }
-
-  if (filter.name) {
-    filterConditions.push({
-      name: { $regex: filter.name, $options: "i" },
+  if (filter) {
+    const filterKeys = Object.keys(filter);
+    filterKeys.forEach((key) => {
+      if (key === "weight_kg" || key === "price") {
+        filterConditions.push({ [key]: parseFloat(filter[key]) });
+      } else if (
+        key === "name" ||
+        key === "category" ||
+        key === "brand" ||
+        key === "dimension_size" ||
+        key === "description"
+      ) {
+        filterConditions.push({
+          [key]: { $regex: `${filter[key]}`, $options: "i" },
+        });
+      }
     });
   }
 
@@ -70,6 +73,7 @@ productController.createProduct = catchAsync(async (req, res, next) => {
     dimension_size,
     weight_kg,
     description,
+    poster_path,
     imageUrl,
     features,
   } = req.body;
@@ -92,6 +96,7 @@ productController.createProduct = catchAsync(async (req, res, next) => {
     dimension_size,
     weight_kg,
     description,
+    poster_path,
     imageUrl,
     features,
   });
@@ -141,6 +146,7 @@ productController.updateProduct = catchAsync(async (req, res, next) => {
     "dimension_size",
     "weight_kg",
     "description",
+    "poster_path",
     "imageUrl",
     "features",
   ];
