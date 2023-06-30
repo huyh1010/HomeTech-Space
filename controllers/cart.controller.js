@@ -169,6 +169,15 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
   }
 });
 
+cartController.getCart = catchAsync(async (req, res, next) => {
+  const cart = await Cart.find().populate({
+    path: "items",
+    populate: { path: "productId", model: "Product" },
+  });
+
+  sendResponse(res, 200, true, { cart }, null, "Get Cart Successful");
+});
+
 cartController.getUserCart = catchAsync(async (req, res, next) => {
   let userId = req.params.id;
   let user = await User.findById(userId);

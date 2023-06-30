@@ -13,7 +13,6 @@ const router = express.Router();
  */
 router.post(
   "/",
-  authentication.loginRequired,
   validators.validate([
     body("product_id").exists().isString().custom(validators.checkObjectId),
   ]),
@@ -28,12 +27,23 @@ router.post(
  */
 router.post(
   "/bundle",
-  authentication.loginRequired,
   validators.validate([
     body("product_id").exists().isString().custom(validators.checkObjectId),
     body("type", "Invalid type").exists().isIn(["regular", "bundle"]),
   ]),
   cartController.addBundleItemToCart
+);
+
+/**
+ * @route GET /carts
+ * @description get cart
+ * @body
+ * @access Public
+ */
+router.get(
+  "/",
+
+  cartController.getCart
 );
 
 /**
@@ -59,7 +69,7 @@ router.get(
  */
 router.delete(
   "/quantity/:id",
-  authentication.loginRequired,
+
   validators.validate([
     param("id").exists().isString().custom(validators.checkObjectId),
     body("product_id").exists().isString().custom(validators.checkObjectId),
@@ -75,7 +85,7 @@ router.delete(
  */
 router.delete(
   "/:id",
-  authentication.loginRequired,
+
   validators.validate([
     param("id").exists().isString().custom(validators.checkObjectId),
     body("product_id").exists().isString().custom(validators.checkObjectId),

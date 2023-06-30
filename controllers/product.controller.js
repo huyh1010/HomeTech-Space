@@ -23,8 +23,9 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   if (filter) {
     const filterKeys = Object.keys(filter);
     filterKeys.forEach((key) => {
-      if (key === "weight_kg" || key === "price") {
+      if (key === "weight_kg") {
         filterConditions.push({ [key]: parseFloat(filter[key]) });
+      } else if (key === "price") {
       } else if (
         key === "name" ||
         key === "category" ||
