@@ -9,7 +9,7 @@ const router = express.Router();
  * @route POST /carts
  * @description Add product to cart
  * @body {product_id, quantity}
- * @access Login required
+ * @access Public
  */
 router.post(
   "/",
@@ -23,7 +23,7 @@ router.post(
  * @route POST /carts/bundle
  * @description Add product bundle to cart
  * @body {product_id, quantity, type}
- * @access Login required
+ * @access Public
  */
 router.post(
   "/bundle",
@@ -62,32 +62,48 @@ router.get(
 );
 
 /**
- * @route DELETE /carts/:id
+ * @route PUT /carts/quantity/dec
  * @description Decrease Item Quantity in Cart
- * @param {id}
- * @access Login required
+ * @body {product_id}
+ * @access Public
  */
-router.delete(
-  "/quantity/:id",
+router.put(
+  "/quantity/dec",
 
   validators.validate([
-    param("id").exists().isString().custom(validators.checkObjectId),
+    // param("id").exists().isString().custom(validators.checkObjectId),
     body("product_id").exists().isString().custom(validators.checkObjectId),
   ]),
   cartController.decreaseItemQuantity
 );
 
 /**
- * @route DELETE /carts/:id
- * @description Remove Item from Cart
+ * @route PUT /carts/quantity/inc
+ * @description Add Item Quantity in Cart
  * @param {id}
- * @access Login required
+ * @access Public
  */
-router.delete(
-  "/:id",
+router.put(
+  "/quantity/inc",
 
   validators.validate([
-    param("id").exists().isString().custom(validators.checkObjectId),
+    // param("id").exists().isString().custom(validators.checkObjectId),
+    body("product_id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  cartController.increaseItemQuantity
+);
+
+/**
+ * @route DELETE /carts/:id
+ * @description Remove Item from Cart
+ * @body {product_id}
+ * @access Public
+ */
+router.delete(
+  "/product",
+
+  validators.validate([
+    // param("id").exists().isString().custom(validators.checkObjectId),
     body("product_id").exists().isString().custom(validators.checkObjectId),
   ]),
   cartController.removeItemFromCart

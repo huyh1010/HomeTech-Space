@@ -26,6 +26,15 @@ productController.getProducts = catchAsync(async (req, res, next) => {
       if (key === "weight_kg") {
         filterConditions.push({ [key]: parseFloat(filter[key]) });
       } else if (key === "price") {
+        if (filter[key] === "below_25") {
+          filterConditions.push({ [key]: { $lt: 25 } });
+        } else if (filter[key] === "between_25_75") {
+          filterConditions.push({ [key]: { $lt: 75, $gt: 25 } });
+        } else if (filter[key] === "above_75") {
+          filterConditions.push({ [key]: { $gt: 75 } });
+        } else {
+          filterConditions.push({ [key]: parseFloat(filter[key]) });
+        }
       } else if (
         key === "name" ||
         key === "category" ||

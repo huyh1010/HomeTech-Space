@@ -10,14 +10,13 @@ const cartController = {};
 cartController.addItemToCart = catchAsync(async (req, res, next) => {
   //get data
   let { product_id, quantity, type } = req.body;
-  const userId = req.user_id;
 
   quantity = Number.parseInt(quantity);
   const shipping_fees = 4.99;
   const tax = 1.49;
 
   //validation
-  const cart = await Cart.findOne({ user: userId });
+  const cart = await Cart.findOne({});
 
   const productDetails = await Product.findById(product_id);
 
@@ -76,12 +75,12 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
         productDetails.price * quantity + shipping_fees + tax
       ).toFixed(2),
     };
-    const newCart = await Cart.create(cartData);
-    newCart.total = sendResponse(
+    const cart = await Cart.create(cartData);
+    cart.total = sendResponse(
       res,
       200,
       true,
-      { newCart },
+      { cart },
       null,
       "Add Item To Cart Successful"
     );
@@ -195,15 +194,17 @@ cartController.getUserCart = catchAsync(async (req, res, next) => {
 });
 
 cartController.decreaseItemQuantity = catchAsync(async (req, res, next) => {
-  let userId = req.params.id;
+  // let userId = req.params.id;
+  console.log(req.body.product_id);
   let productId = req.body.product_id;
-  let user = await User.findById(userId);
-  if (!user)
-    throw new AppError(400, "Invalid User ID", "Decrease Item Quantity Error");
+  // let user = await User.findById(userId);
+  // if (!user)
+  //   throw new AppError(400, "Invalid User ID", "Decrease Item Quantity Error");
 
-  let cart = await Cart.findOne({ user: userId });
-  if (!cart)
-    throw new AppError(400, "Cart not found", "Decrease Item Quantity Error");
+  let cart = await Cart.findOne({});
+
+  // if (!cart)
+  //   throw new AppError(400, "Cart not found", "Decrease Item Quantity Error");
 
   let itemIndex = cart.items.findIndex((item) => item.productId == productId);
 
@@ -224,7 +225,7 @@ cartController.decreaseItemQuantity = catchAsync(async (req, res, next) => {
       res,
       200,
       true,
-      { cart },
+      { cart, productId },
       null,
       "Decrease Item Quantity Successful"
     );
@@ -237,13 +238,58 @@ cartController.decreaseItemQuantity = catchAsync(async (req, res, next) => {
   }
 });
 
-cartController.removeItemFromCart = catchAsync(async (req, res, next) => {
-  let userId = req.params.id;
+cartController.increaseItemQuantity = catchAsync(async (req, res, next) => {
+  // let userId = req.params.id;
+  console.log(req.body.product_id);
   let productId = req.body.product_id;
-  let user = await User.findById(userId);
-  if (!user) throw new AppError(400, "Invalid User ID", "Remove Item Error");
+  // let user = await User.findById(userId);
+  // if (!user)
+  //   throw new AppError(400, "Invalid User ID", "Increase Item Quantity Error");
 
-  let cart = await Cart.findOne({ user: userId });
+  let cart = await Cart.findOne({});
+
+  // if (!cart)
+  //   throw new AppError(400, "Cart not found", "Increase Item Quantity Error");
+
+  let itemIndex = cart.items.findIndex((item) => item.productId == productId);
+
+  if (itemIndex > -1) {
+    let productItem = cart.items[itemIndex];
+    productItem.quantity += 1;
+    productItem.total = productItem.quantity * productItem.price;
+    cart.items[itemIndex] = productItem;
+    cart.subTotal = cart.items
+      .map((item) => item.total)
+      .reduce((acc, curr) => acc + curr)
+      .toFixed(2);
+    cart.total = parseFloat(
+      cart.subTotal + cart.tax_fees + cart.shipping_fees
+    ).toFixed(2);
+    cart = await cart.save();
+    sendResponse(
+      res,
+      200,
+      true,
+      { cart, productId },
+      null,
+      "Increase Item Quantity Successful"
+    );
+  } else {
+    throw new AppError(
+      400,
+      "Item does not exist in cart",
+      "Increase Item Quantity Error"
+    );
+  }
+});
+
+cartController.removeItemFromCart = catchAsync(async (req, res, next) => {
+  // let userId = req.params.id;
+  let productId = req.body.product_id;
+  // let user = await User.findById(userId);
+  // if (!user) throw new AppError(400, "Invalid User ID", "Remove Item Error");
+
+  let cart = await Cart.findOne({});
   if (!cart) throw new AppError(400, "Cart not found", "Remove Item Error");
 
   let itemIndex = cart.items.findIndex((item) => item.productId == productId);
@@ -258,7 +304,14 @@ cartController.removeItemFromCart = catchAsync(async (req, res, next) => {
       cart.subTotal + cart.tax_fees + cart.shipping_fees
     ).toFixed(2);
     cart = await cart.save();
-    sendResponse(res, 200, true, { cart }, null, "Remove Item Successful");
+    sendResponse(
+      res,
+      200,
+      true,
+      { cart, productId },
+      null,
+      "Remove Item Successful"
+    );
   } else {
     throw new AppError(400, "Item does not exist in cart", "Remove Item Error");
   }
