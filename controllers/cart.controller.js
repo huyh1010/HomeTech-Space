@@ -8,6 +8,8 @@ const User = require("../models/User");
 const cartController = {};
 
 cartController.addItemToCart = catchAsync(async (req, res, next) => {
+  let userId = req.params.userId;
+
   //get data
   let { product_id, quantity, type } = req.body;
 
@@ -16,7 +18,7 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
   const tax = 1.49;
 
   //validation
-  const cart = await Cart.findOne({});
+  let cart = await Cart.findOne({ user: userId });
 
   const productDetails = await Product.findById(product_id);
 

@@ -6,22 +6,35 @@ const User = require("../models/User");
 const orderController = {};
 
 orderController.createOrder = catchAsync(async (req, res, next) => {
-  const { shipping_address, payment_method, cartId } = req.body;
+  const {
+    name,
+    email,
+    phone,
+    shipping_address,
+    payment_method,
+    district,
+    city,
+  } = req.body;
   const userId = req.user_id;
 
   let order = await Order.findById(userId);
-  let cart = await Cart.findOne({ user: userId, _id: cartId });
+  let cart = await Cart.findOne({});
+  console.log(cart.items);
 
   if (!cart) throw new AppError(400, "Items not found", "Create Order Error");
 
   order = await Order.create({
     buyer: userId,
-    productList: cartId,
+    name: name,
+    email: email,
+    phone: phone,
     shipping_address: shipping_address,
     payment_method: payment_method,
+    district: district,
+    city: city,
   });
 
-  sendResponse(res, 200, true, { order }, null, "Create Order Successful");
+  // sendResponse(res, 200, true, { order }, null, "Create Order Successful");
 });
 
 orderController.getOrders = catchAsync(async (req, res, next) => {

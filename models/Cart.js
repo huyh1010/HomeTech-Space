@@ -24,7 +24,7 @@ const cartSchema = new Schema(
     tax_fees: { type: Number, default: 1.49 },
     shipping_fees: { type: Number, default: 4.99 },
     total: { type: Number },
-    // user: { type: Schema.Types.ObjectId, ref: "User" },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

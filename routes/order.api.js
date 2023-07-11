@@ -8,7 +8,7 @@ const router = express.Router();
 /**
  * @route POST /orders
  * @description Create an order
- * @body {buyer, shipping address, payment method, cart}
+ * @body {name, email, phone, district, city, buyer, shipping address, payment method, cart}
  * @access Login required
  */
 router.post(

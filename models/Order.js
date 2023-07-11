@@ -4,12 +4,18 @@ const Schema = mongoose.Schema;
 const orderSchema = mongoose.Schema(
   {
     buyer: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-    productList: {
-      type: Schema.Types.ObjectId,
-      ref: "Cart",
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    orderItems: {
+      product_id: { type: Schema.Types.ObjectId },
+      product_quantity: { type: Number },
+      price: { type: Number },
     },
 
     shipping_address: { type: String, required: true },
+    district: { type: String, required: true },
+    city: { type: String, required: true },
     payment_method: {
       type: String,
       enum: ["credit/debit", "COD"],
