@@ -8,14 +8,13 @@ const User = require("../models/User");
 const cartController = {};
 
 cartController.addItemToCart = catchAsync(async (req, res, next) => {
-  let userId = req.params.userId;
+  let userId = req.user_id;
+  console.log(userId);
 
   //get data
   let { product_id, quantity, type } = req.body;
 
   quantity = Number.parseInt(quantity);
-  const shipping_fees = 4.99;
-  const tax = 1.49;
 
   //validation
   let cart = await Cart.findOne({ user: userId });
@@ -34,12 +33,6 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
       cart.items[itemIndex].price = productDetails.price;
       cart.items[itemIndex].total =
         cart.items[itemIndex].quantity * productDetails.price;
-      cart.subTotal = cart.items
-        .map((item) => item.total)
-        .reduce((acc, curr) => acc + curr);
-      cart.total = parseFloat(
-        cart.subTotal + cart.tax_fees + cart.shipping_fees
-      ).toFixed(2);
     } else if (quantity > 0) {
       cart.items.push({
         productId: product_id,
@@ -48,18 +41,11 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
         total: parseFloat(productDetails.price * quantity).toFixed(2),
         type: type,
       });
-      cart.subTotal = cart.items
-        .map((item) => item.total)
-        .reduce((acc, curr) => acc + curr)
-        .toFixed(2);
-      cart.total = parseFloat(
-        cart.subTotal + cart.tax_fees + cart.shipping_fees
-      ).toFixed(2);
     } else {
       throw new AppError(400, "Invalid Request", "Add Item To Cart Error");
     }
     let data = await cart.save();
-    sendResponse(res, 200, true, { data }, null, "Add Item To Cart Successful");
+    sendResponse(res, 200, true, data, null, "Add Item To Cart Successful");
   } else {
     const cartData = {
       user: userId,
@@ -72,17 +58,13 @@ cartController.addItemToCart = catchAsync(async (req, res, next) => {
           type: type,
         },
       ],
-      subTotal: parseFloat(productDetails.price * quantity).toFixed(2),
-      total: parseFloat(
-        productDetails.price * quantity + shipping_fees + tax
-      ).toFixed(2),
     };
     const cart = await Cart.create(cartData);
     cart.total = sendResponse(
       res,
       200,
       true,
-      { cart },
+      cart,
       null,
       "Add Item To Cart Successful"
     );
@@ -95,8 +77,6 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
   const userId = req.user_id;
 
   quantity = Number.parseInt(quantity);
-  const shipping_fees = 4.99;
-  const tax = 1.49;
 
   //validation
   const cart = await Cart.findOne({ user: userId });
@@ -115,12 +95,6 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
       cart.items[itemIndex].price = productDetails.price;
       cart.items[itemIndex].total =
         cart.items[itemIndex].quantity * productDetails.price;
-      cart.subTotal = cart.items
-        .map((item) => item.total)
-        .reduce((acc, curr) => acc + curr);
-      cart.total = parseFloat(
-        cart.subTotal + cart.tax_fees + cart.shipping_fees
-      ).toFixed(2);
     } else if (quantity > 0) {
       cart.items.push({
         productId: product_id,
@@ -129,18 +103,11 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
         total: parseFloat(productDetails.price * quantity).toFixed(2),
         type: type,
       });
-      cart.subTotal = cart.items
-        .map((item) => item.total)
-        .reduce((acc, curr) => acc + curr)
-        .toFixed(2);
-      cart.total = parseFloat(
-        cart.subTotal + cart.tax_fees + cart.shipping_fees
-      ).toFixed(2);
     } else {
       throw new AppError(400, "Invalid Request", "Add Item To Cart Error");
     }
     let data = await cart.save();
-    sendResponse(res, 200, true, { data }, null, "Add Item To Cart Successful");
+    sendResponse(res, 200, true, data, null, "Add Item To Cart Successful");
   } else {
     const cartData = {
       user: userId,
@@ -153,17 +120,13 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
           type: type,
         },
       ],
-      subTotal: parseFloat(productDetails.price * quantity).toFixed(2),
-      total: parseFloat(
-        productDetails.price * quantity + shipping_fees + tax
-      ).toFixed(2),
     };
     const newCart = await Cart.create(cartData);
     newCart.total = sendResponse(
       res,
       200,
       true,
-      { newCart },
+      newCart,
       null,
       "Add Item To Cart Successful"
     );
@@ -176,11 +139,11 @@ cartController.getCart = catchAsync(async (req, res, next) => {
     populate: { path: "productId", model: "Product" },
   });
 
-  sendResponse(res, 200, true, { cart }, null, "Get Cart Successful");
+  sendResponse(res, 200, true, cart, null, "Get Cart Successful");
 });
 
 cartController.getUserCart = catchAsync(async (req, res, next) => {
-  let userId = req.params.id;
+  let userId = req.user_id;
   let user = await User.findById(userId);
   if (!user) throw new AppError(400, "Invalid User ID", "Get Cart Error");
 
@@ -197,7 +160,7 @@ cartController.getUserCart = catchAsync(async (req, res, next) => {
 
 cartController.decreaseItemQuantity = catchAsync(async (req, res, next) => {
   // let userId = req.params.id;
-  console.log(req.body.product_id);
+
   let productId = req.body.product_id;
   // let user = await User.findById(userId);
   // if (!user)
@@ -214,14 +177,8 @@ cartController.decreaseItemQuantity = catchAsync(async (req, res, next) => {
     let productItem = cart.items[itemIndex];
     productItem.quantity -= 1;
     productItem.total = productItem.quantity * productItem.price;
-    cart.items[itemIndex] = productItem;
-    cart.subTotal = cart.items
-      .map((item) => item.total)
-      .reduce((acc, curr) => acc + curr)
-      .toFixed(2);
-    cart.total = parseFloat(
-      cart.subTotal + cart.tax_fees + cart.shipping_fees
-    ).toFixed(2);
+    // cart.items[itemIndex] = productItem;
+
     cart = await cart.save();
     sendResponse(
       res,
@@ -241,8 +198,6 @@ cartController.decreaseItemQuantity = catchAsync(async (req, res, next) => {
 });
 
 cartController.increaseItemQuantity = catchAsync(async (req, res, next) => {
-  // let userId = req.params.id;
-  console.log(req.body.product_id);
   let productId = req.body.product_id;
   // let user = await User.findById(userId);
   // if (!user)
@@ -260,13 +215,7 @@ cartController.increaseItemQuantity = catchAsync(async (req, res, next) => {
     productItem.quantity += 1;
     productItem.total = productItem.quantity * productItem.price;
     cart.items[itemIndex] = productItem;
-    cart.subTotal = cart.items
-      .map((item) => item.total)
-      .reduce((acc, curr) => acc + curr)
-      .toFixed(2);
-    cart.total = parseFloat(
-      cart.subTotal + cart.tax_fees + cart.shipping_fees
-    ).toFixed(2);
+
     cart = await cart.save();
     sendResponse(
       res,
@@ -285,11 +234,13 @@ cartController.increaseItemQuantity = catchAsync(async (req, res, next) => {
   }
 });
 
+cartController.updateCartToUser = catchAsync(async (req, res, next) => {
+  const user = req.body.user_id;
+  console.log(user);
+});
+
 cartController.removeItemFromCart = catchAsync(async (req, res, next) => {
-  // let userId = req.params.id;
   let productId = req.body.product_id;
-  // let user = await User.findById(userId);
-  // if (!user) throw new AppError(400, "Invalid User ID", "Remove Item Error");
 
   let cart = await Cart.findOne({});
   if (!cart) throw new AppError(400, "Cart not found", "Remove Item Error");
@@ -298,13 +249,7 @@ cartController.removeItemFromCart = catchAsync(async (req, res, next) => {
 
   if (itemIndex > -1) {
     cart.items.splice(itemIndex, 1);
-    cart.subTotal = cart.items
-      .map((item) => item.total)
-      .reduce((acc, curr) => acc + curr)
-      .toFixed(2);
-    cart.total = parseFloat(
-      cart.subTotal + cart.tax_fees + cart.shipping_fees
-    ).toFixed(2);
+
     cart = await cart.save();
     sendResponse(
       res,

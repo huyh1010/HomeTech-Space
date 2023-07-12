@@ -53,11 +53,11 @@ router.get(
  * @access Login required
  */
 router.get(
-  "/:id",
+  "/user",
   authentication.loginRequired,
-  validators.validate([
-    param("id").exists().isString().custom(validators.checkObjectId),
-  ]),
+  // validators.validate([
+  //   param("id").exists().isString().custom(validators.checkObjectId),
+  // ]),
   cartController.getUserCart
 );
 
@@ -91,6 +91,21 @@ router.put(
     body("product_id").exists().isString().custom(validators.checkObjectId),
   ]),
   cartController.increaseItemQuantity
+);
+
+/**
+ * @route PUT /carts/user
+ * @description Assign cart to user
+ * @access Public
+ */
+router.put(
+  "/user",
+
+  validators.validate([
+    // param("id").exists().isString().custom(validators.checkObjectId),
+    body("user_id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  cartController.updateCartToUser
 );
 
 /**

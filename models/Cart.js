@@ -20,10 +20,10 @@ module.exports = Item;
 const cartSchema = new Schema(
   {
     items: [itemSchema],
-    subTotal: { type: Number, default: 0 },
+
     tax_fees: { type: Number, default: 1.49 },
     shipping_fees: { type: Number, default: 4.99 },
-    total: { type: Number },
+
     user: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
