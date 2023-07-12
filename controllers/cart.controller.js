@@ -143,7 +143,8 @@ cartController.getCart = catchAsync(async (req, res, next) => {
 });
 
 cartController.getUserCart = catchAsync(async (req, res, next) => {
-  let userId = req.user_id;
+  let userId = req.params.id;
+
   let user = await User.findById(userId);
   if (!user) throw new AppError(400, "Invalid User ID", "Get Cart Error");
 
@@ -155,7 +156,7 @@ cartController.getUserCart = catchAsync(async (req, res, next) => {
     });
   if (!cart) throw new AppError(400, "Cart not found", "Get Cart Error");
 
-  sendResponse(res, 200, true, { cart }, null, "Get Cart Successful");
+  sendResponse(res, 200, true, cart, null, "Get Cart Successful");
 });
 
 cartController.decreaseItemQuantity = catchAsync(async (req, res, next) => {
@@ -235,8 +236,19 @@ cartController.increaseItemQuantity = catchAsync(async (req, res, next) => {
 });
 
 cartController.updateCartToUser = catchAsync(async (req, res, next) => {
-  const user = req.body.user_id;
-  console.log(user);
+  const userId = req.body.user_id;
+  const cartId = req.body.cart_id;
+  console.log(cartId);
+
+  let cart = await Cart.findOne({ user: userId });
+
+  if (!cart) {
+    const cartWithoutLogin = await Cart.findOne({ _id: cartId });
+    cartWithoutLogin.user = userId;
+    cart = cartWithoutLogin;
+    await cart.save();
+    sendResponse(res, 200, true, cart, null, "Assign Cart To User Successful");
+  }
 });
 
 cartController.removeItemFromCart = catchAsync(async (req, res, next) => {

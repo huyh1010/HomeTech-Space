@@ -53,11 +53,11 @@ router.get(
  * @access Login required
  */
 router.get(
-  "/user",
+  "/user/:id",
   authentication.loginRequired,
-  // validators.validate([
-  //   param("id").exists().isString().custom(validators.checkObjectId),
-  // ]),
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
   cartController.getUserCart
 );
 
@@ -104,6 +104,7 @@ router.put(
   validators.validate([
     // param("id").exists().isString().custom(validators.checkObjectId),
     body("user_id").exists().isString().custom(validators.checkObjectId),
+    body("cart_id").exists().isString().custom(validators.checkObjectId),
   ]),
   cartController.updateCartToUser
 );
