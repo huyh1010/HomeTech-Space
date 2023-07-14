@@ -5,18 +5,32 @@ const { body, param } = require("express-validator");
 const cartController = require("../controllers/cart.controller");
 const router = express.Router();
 
+// /**
+//  * @route POST /carts
+//  * @description Add product to cart
+//  * @body {product_id, quantity}
+//  * @access Public
+//  */
+// router.post(
+//   "/",
+//   validators.validate([
+//     body("product_id").exists().isString().custom(validators.checkObjectId),
+//   ]),
+//   cartController.addItemToCart
+// );
+
 /**
  * @route POST /carts
- * @description Add product to cart
- * @body {product_id, quantity}
+ * @description Create cart
+ * @body {user_id, cart}
  * @access Public
  */
 router.post(
   "/",
   validators.validate([
-    body("product_id").exists().isString().custom(validators.checkObjectId),
+    body("user_id").exists().isString().custom(validators.checkObjectId),
   ]),
-  cartController.addItemToCart
+  cartController.createCart
 );
 
 /**

@@ -7,65 +7,76 @@ const User = require("../models/User");
 
 const cartController = {};
 
-cartController.addItemToCart = catchAsync(async (req, res, next) => {
-  // let userId = req.user_id;
-  // console.log(userId);
+cartController.createCart = catchAsync(async (req, res, next) => {
+  const user = req.body.user_id;
+  const cartItems = req.body.cart;
 
-  //get data
-  let { product_id, quantity } = req.body;
-
-  quantity = Number.parseInt(quantity);
-
-  //validation
-  let cart = await Cart.findOne({});
-
-  const productDetails = await Product.findById(product_id);
-
-  if (cart) {
-    let itemIndex = cart.items.findIndex(
-      (item) => item.productId == product_id
-    );
-
-    if (itemIndex > -1) {
-      cart.items[itemIndex].quantity =
-        cart.items[itemIndex].quantity + quantity;
-      cart.items[itemIndex].price = productDetails.price;
-      cart.items[itemIndex].total =
-        cart.items[itemIndex].quantity * productDetails.price;
-    } else if (quantity > 0) {
-      cart.items.push({
-        productId: product_id,
-        quantity: quantity,
-        price: productDetails.price,
-        total: parseFloat(productDetails.price * quantity).toFixed(2),
-      });
-    } else {
-      throw new AppError(400, "Invalid Request", "Add Item To Cart Error");
-    }
-    let data = await cart.save();
-    sendResponse(res, 200, true, data, null, "Add Item To Cart Successful");
-  } else {
-    const cartData = {
-      items: [
-        {
-          productId: product_id,
-          quantity: quantity,
-          price: productDetails.price,
-          total: parseFloat(productDetails.price * quantity),
-        },
-      ],
-    };
-    const cart = await Cart.create(cartData);
-    cart.total = sendResponse(
-      res,
-      200,
-      true,
-      cart,
-      null,
-      "Add Item To Cart Successful"
-    );
+  console.log(cartItems);
+  let cart = await Cart.findOne({ user: user });
+  if (!cart) {
+    cart = await Cart.create({ user });
+    cart.cart = cartItems;
+    await cart.save();
   }
+  sendResponse(res, 200, true, cart, null, "Create Order Success");
 });
+
+// cartController.addItemToCart = catchAsync(async (req, res, next) => {
+//   // let userId = req.user_id;
+//   // console.log(userId);
+
+//   //get data
+//   let data = null;
+//   let { product_id, quantity } = req.body;
+
+//   quantity = Number.parseInt(quantity);
+
+//   //validation
+//   let cart = await Cart.findOne({}).populate({
+//     path: "items",
+//     populate: { path: "productId", model: "Product" },
+//   });
+//   const productDetails = await Product.findById(product_id);
+
+//   if (cart) {
+//     let itemIndex = cart.items.findIndex(
+//       (item) => item.productId == product_id
+//     );
+
+//     if (itemIndex > -1) {
+//       cart.items[itemIndex].quantity =
+//         cart.items[itemIndex].quantity + quantity;
+//       cart.items[itemIndex].price = productDetails.price;
+//       cart.items[itemIndex].total =
+//         cart.items[itemIndex].quantity * productDetails.price;
+//     } else if (quantity > 0) {
+//       cart.items.push({
+//         productId: product_id,
+//         quantity: quantity,
+//         price: productDetails.price,
+//         total: parseFloat(productDetails.price * quantity).toFixed(2),
+//       });
+//     } else {
+//       throw new AppError(400, "Invalid Request", "Add Item To Cart Error");
+//     }
+//     data = await cart.save();
+//   } else {
+//     const cartData = {
+//       items: [
+//         {
+//           productId: product_id,
+//           quantity: quantity,
+//           price: productDetails.price,
+//           total: parseFloat(productDetails.price * quantity),
+//         },
+//       ],
+//     };
+//     const cart = await Cart.create(cartData);
+//     data = await cart.save();
+//   }
+//   console.log(data);
+//   sendResponse(res, 200, true, data, null, "Add Item To Cart Successful");
+// });
 
 cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
   //get data
@@ -127,8 +138,6 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
 });
 
 cartController.getCart = catchAsync(async (req, res, next) => {
-  console.log(req.body);
-
   const cart = await Cart.find()
     .populate({
       path: "items",
@@ -162,12 +171,8 @@ cartController.getUserCart = catchAsync(async (req, res, next) => {
   let user = await User.findById(userId);
   if (!user) throw new AppError(400, "Invalid User ID", "Get Cart Error");
 
-  let cart = await Cart.findOne({ user: userId })
-    .populate("user")
-    .populate({
-      path: "items",
-      populate: { path: "productId", model: "Product" },
-    });
+  let cart = await Cart.findOne({ user: userId }).populate("user");
+
   if (!cart) throw new AppError(400, "Cart not found", "Get Cart Error");
 
   sendResponse(res, 200, true, cart, null, "Get Cart Successful");
