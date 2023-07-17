@@ -5,19 +5,20 @@ const { body, param } = require("express-validator");
 const cartController = require("../controllers/cart.controller");
 const router = express.Router();
 
-// /**
-//  * @route POST /carts
-//  * @description Add product to cart
-//  * @body {product_id, quantity}
-//  * @access Public
-//  */
-// router.post(
-//   "/",
-//   validators.validate([
-//     body("product_id").exists().isString().custom(validators.checkObjectId),
-//   ]),
-//   cartController.addItemToCart
-// );
+/**
+ * @route PUT /carts
+ * @description Update cart
+ * @body { id}
+ * * @body { cart}
+ * @access Public
+ */
+router.put(
+  "/:id",
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  cartController.updateCart
+);
 
 /**
  * @route POST /carts

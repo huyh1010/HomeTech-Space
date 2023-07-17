@@ -11,7 +11,6 @@ cartController.createCart = catchAsync(async (req, res, next) => {
   const user = req.body.user_id;
   const cartItems = req.body.cart;
 
-  console.log(cartItems);
   let cart = await Cart.findOne({ user: user });
   if (!cart) {
     cart = await Cart.create({ user });
@@ -21,62 +20,19 @@ cartController.createCart = catchAsync(async (req, res, next) => {
   sendResponse(res, 200, true, cart, null, "Create Order Success");
 });
 
-// cartController.addItemToCart = catchAsync(async (req, res, next) => {
-//   // let userId = req.user_id;
-//   // console.log(userId);
+cartController.updateCart = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+  const cartItems = req.body.cart;
+  console.log(cartItems);
+  console.log(req.body);
 
-//   //get data
-//   let data = null;
-//   let { product_id, quantity } = req.body;
+  let cart = await Cart.findOne({ user: userId });
+  if (!cart) throw new AppError(400, "Cart not found", "Update Cart Error");
 
-//   quantity = Number.parseInt(quantity);
-
-//   //validation
-//   let cart = await Cart.findOne({}).populate({
-//     path: "items",
-//     populate: { path: "productId", model: "Product" },
-//   });
-//   const productDetails = await Product.findById(product_id);
-
-//   if (cart) {
-//     let itemIndex = cart.items.findIndex(
-//       (item) => item.productId == product_id
-//     );
-
-//     if (itemIndex > -1) {
-//       cart.items[itemIndex].quantity =
-//         cart.items[itemIndex].quantity + quantity;
-//       cart.items[itemIndex].price = productDetails.price;
-//       cart.items[itemIndex].total =
-//         cart.items[itemIndex].quantity * productDetails.price;
-//     } else if (quantity > 0) {
-//       cart.items.push({
-//         productId: product_id,
-//         quantity: quantity,
-//         price: productDetails.price,
-//         total: parseFloat(productDetails.price * quantity).toFixed(2),
-//       });
-//     } else {
-//       throw new AppError(400, "Invalid Request", "Add Item To Cart Error");
-//     }
-//     data = await cart.save();
-//   } else {
-//     const cartData = {
-//       items: [
-//         {
-//           productId: product_id,
-//           quantity: quantity,
-//           price: productDetails.price,
-//           total: parseFloat(productDetails.price * quantity),
-//         },
-//       ],
-//     };
-//     const cart = await Cart.create(cartData);
-//     data = await cart.save();
-//   }
-//   console.log(data);
-//   sendResponse(res, 200, true, data, null, "Add Item To Cart Successful");
-// });
+  cart.cart = cartItems;
+  await cart.save();
+  sendResponse(res, 200, true, cart, null, "Update Cart Success");
+});
 
 cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
   //get data
@@ -139,10 +95,10 @@ cartController.addBundleItemToCart = catchAsync(async (req, res, next) => {
 
 cartController.getCart = catchAsync(async (req, res, next) => {
   const cart = await Cart.find()
-    .populate({
-      path: "items",
-      populate: { path: "productId", model: "Product" },
-    })
+    // .populate({
+    //   path: "items",
+    //   populate: { path: "productId", model: "Product" },
+    // })
     .populate("user");
 
   sendResponse(res, 200, true, cart, null, "Get Cart Successful");
