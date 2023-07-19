@@ -17,7 +17,7 @@ cartController.createCart = catchAsync(async (req, res, next) => {
     cart.cart = cartItems;
     await cart.save();
   }
-  sendResponse(res, 200, true, cart, null, "Create Order Success");
+  sendResponse(res, 200, true, cart, null, "Create Cart Success");
 });
 
 cartController.updateCart = catchAsync(async (req, res, next) => {
