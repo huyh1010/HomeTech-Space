@@ -76,6 +76,7 @@ categoryController.getSingleCategory = catchAsync(async (req, res, next) => {
   //Validation
   if (!category)
     throw new AppError(400, "Category not found", "Get Category Error");
+
   //Process
   //Response
   return sendResponse(

@@ -22,7 +22,7 @@ router.post(
  * @route GET /bundles
  * @description get all bundles
  * @body
- * @access Login required
+ * @access Public
  */
 router.get("/", productBundleController.getProductBundles);
 

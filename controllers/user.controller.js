@@ -1,12 +1,13 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const Cart = require("../models/Cart");
 
 const userController = {};
 
 userController.register = catchAsync(async (req, res, next) => {
   //Get data from request
-  let { name, email, password, role } = req.body;
+  let { name, email, password, role, cart } = req.body;
   //Validation
   let user = await User.findOne({ email });
   if (user)
@@ -15,13 +16,17 @@ userController.register = catchAsync(async (req, res, next) => {
   const salt = await bcrypt.genSalt(10);
   password = await bcrypt.hash(password, salt);
   user = await User.create({ name, email, password, role });
+  let userCart = await Cart.create({ user: user._id });
+  userCart.cart = cart;
+  await userCart.save();
   const accessToken = await user.generateToken();
+
   //Response
   sendResponse(
     res,
     200,
     true,
-    { user, accessToken },
+    { user, accessToken, userCart },
     null,
     "Create User Successful"
   );
@@ -34,11 +39,12 @@ userController.getCurrentUser = catchAsync(async (req, res, next) => {
   if (!user)
     throw new AppError(400, "User not found", "Get Current User Error");
 
+  const cart = await Cart.findOne({ user: currentUserId }).populate("user");
   return sendResponse(
     res,
     200,
     true,
-    { user },
+    { user, cart },
     null,
     "Get Current User Successful"
   );
