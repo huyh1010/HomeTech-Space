@@ -8,11 +8,8 @@ const orderSchema = mongoose.Schema(
     email: { type: String, required: true },
     phone: { type: String, required: true },
     orderItems: {
-      product_id: { type: Schema.Types.ObjectId },
-      product_quantity: { type: Number },
-      price: { type: Number },
+      type: Array,
     },
-
     shipping_address: { type: String, required: true },
     district: { type: String, required: true },
     city: { type: String, required: true },

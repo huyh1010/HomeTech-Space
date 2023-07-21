@@ -15,10 +15,11 @@ router.post(
   "/",
   authentication.loginRequired,
   validators.validate([
-    body("shipping_address", "Invalid address").exists().isString(),
-    body("payment_method", "Invalid payment method")
+    body("user_id", "Invalid user")
       .exists()
-      .isIn(["credit/debit", "COD"]),
+      .isString()
+      .custom(validators.checkObjectId),
+    body("customer_info", "Invalid customer information").exists().isObject(),
   ]),
   orderController.createOrder
 );

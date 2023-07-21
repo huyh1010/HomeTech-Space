@@ -2,39 +2,49 @@ const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const Cart = require("../models/Cart");
 const Order = require("../models/Order");
 const User = require("../models/User");
+const ShortUniqueId = require("short-unique-id");
 
 const orderController = {};
 
 orderController.createOrder = catchAsync(async (req, res, next) => {
+  const { customer_info, cart, user_id } = req.body;
   const {
     name,
     email,
     phone,
     shipping_address,
-    payment_method,
     district,
     city,
-  } = req.body;
-  const userId = req.user_id;
+    payment_method,
+  } = customer_info;
 
-  let order = await Order.findById(userId);
-  let cart = await Cart.findOne({});
-  console.log(cart.items);
-
-  if (!cart) throw new AppError(400, "Items not found", "Create Order Error");
-
-  order = await Order.create({
-    buyer: userId,
+  const order = await Order.create({
+    buyer: user_id,
     name: name,
     email: email,
     phone: phone,
+    orderItems: cart,
     shipping_address: shipping_address,
     payment_method: payment_method,
     district: district,
     city: city,
   });
+  const orderId = order._id;
 
-  // sendResponse(res, 200, true, { order }, null, "Create Order Successful");
+  const userCart = await Cart.findOneAndUpdate(
+    { user: user_id },
+    { cart: [] },
+    { new: true }
+  );
+
+  sendResponse(
+    res,
+    200,
+    true,
+    { order, orderId, userCart },
+    null,
+    "Create Order Successful"
+  );
 });
 
 orderController.getOrders = catchAsync(async (req, res, next) => {
@@ -115,12 +125,7 @@ orderController.getCurrentUserOrders = catchAsync(async (req, res, next) => {
 
 orderController.getSingleOrder = catchAsync(async (req, res, next) => {
   const orderId = req.params.id;
-  const order = await Order.findById(orderId)
-    .populate("buyer")
-    .populate({
-      path: "productList",
-      populate: { path: "productId", model: "Product" },
-    });
+  const order = await Order.findById(orderId).populate("buyer");
 
   //Validation
   if (!order) throw new AppError(400, "Order not found", "Get Order Error");
@@ -131,7 +136,7 @@ orderController.getSingleOrder = catchAsync(async (req, res, next) => {
     res,
     200,
     true,
-    { order },
+    order,
     null,
     "Get Single Order Successful"
   );
