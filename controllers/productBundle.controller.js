@@ -10,7 +10,7 @@ productBundleController.createProductBundle = catchAsync(
   async (req, res, next) => {
     //Get data from request
     const currentUserId = req.user_id;
-    const { name, products, price, poster_path } = req.body;
+    const { name, products, price, poster_path, description } = req.body;
     //Validation
     const user = await User.findById(currentUserId);
     if (user.role !== "admin")
@@ -20,7 +20,13 @@ productBundleController.createProductBundle = catchAsync(
     if (bundle)
       throw new AppError(400, "Bundle already exists", "Create Bundle Error");
     //Process
-    bundle = await ProductBundle.create({ name, products, price, poster_path });
+    bundle = await ProductBundle.create({
+      name,
+      products,
+      price,
+      poster_path,
+      description,
+    });
 
     //Response
     sendResponse(res, 200, true, { bundle }, null, "Create Bundle Successful");
@@ -77,7 +83,7 @@ productBundleController.getSingleProductBundle = catchAsync(
       res,
       200,
       true,
-      { bundle },
+      bundle,
       null,
       "Get Single Product Bundle Successful"
     );

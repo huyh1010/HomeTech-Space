@@ -35,13 +35,16 @@ router.get("/", authentication.loginRequired, orderController.getOrders);
 /**
  * @route GET /orders/me
  * @description Get current user order
- * @body
+ * @param (user_id)
  * @access Login required
  */
 router.get(
-  "/me",
+  "/user/:user_id",
   authentication.loginRequired,
-  orderController.getCurrentUserOrders
+  validators.validate([
+    param("user_id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  orderController.getUserOrder
 );
 
 /**

@@ -30,7 +30,7 @@ router.get("/", productBundleController.getProductBundles);
  * @route GET /bundles/:id
  * @description Get a single bundle by ID.
  * @param {id}
- * @access Login required
+ * @access Public
  */
 router.get(
   "/:id",
