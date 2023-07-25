@@ -87,7 +87,7 @@ orderController.getUserOrder = catchAsync(async (req, res, next) => {
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
 
-  const filterConditions = [{ is_Cancel: false }, { buyer: currentUserId }];
+  const filterConditions = [{ buyer: currentUserId }];
   if (filter.id) {
     filterConditions.push({ _id: filter.id });
   }
@@ -180,17 +180,18 @@ orderController.updateOrder = catchAsync(async (req, res, next) => {
 });
 
 orderController.cancelOrder = catchAsync(async (req, res, next) => {
-  const currentUserId = req.user_id;
   //Get data from request
   const orderId = req.params.id;
+
   //Validation
   const order = await Order.findOneAndUpdate(
-    { _id: orderId, buyer: currentUserId },
-    { is_Cancel: true },
+    { _id: orderId },
+    { status: "canceled" },
     { new: true }
   );
   //Process
+
   //Response
-  sendResponse(res, 200, true, { order }, null, "Cancel Order Successful");
+  sendResponse(res, 200, true, order, null, "Cancel Order Successful");
 });
 module.exports = orderController;

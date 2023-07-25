@@ -7,6 +7,7 @@ const productBundleSchema = mongoose.Schema(
     products: { type: [Schema.Types.ObjectId], required: true, ref: "Product" },
     price: { type: Number, required: true },
     poster_path: { type: String },
+    imageUrl: { type: [String] },
     description: { type: String },
     isDeleted: { type: Boolean, default: false },
   },

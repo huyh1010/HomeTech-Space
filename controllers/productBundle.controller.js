@@ -10,7 +10,8 @@ productBundleController.createProductBundle = catchAsync(
   async (req, res, next) => {
     //Get data from request
     const currentUserId = req.user_id;
-    const { name, products, price, poster_path, description } = req.body;
+    const { name, products, price, poster_path, description, imageUrl } =
+      req.body;
     //Validation
     const user = await User.findById(currentUserId);
     if (user.role !== "admin")
@@ -26,10 +27,11 @@ productBundleController.createProductBundle = catchAsync(
       price,
       poster_path,
       description,
+      imageUrl,
     });
 
     //Response
-    sendResponse(res, 200, true, { bundle }, null, "Create Bundle Successful");
+    sendResponse(res, 200, true, bundle, null, "Create Bundle Successful");
   }
 );
 
