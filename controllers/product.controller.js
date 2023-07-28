@@ -43,7 +43,7 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   const filterCriteria = filterConditions.length
     ? { $and: filterConditions }
     : {};
-  console.log(filterCriteria);
+
   const count = await Product.countDocuments(filterCriteria);
   const totalPages = Math.ceil(count / limit);
   const offset = limit * (page - 1);
@@ -165,7 +165,7 @@ productController.updateProduct = catchAsync(async (req, res, next) => {
     res,
     200,
     true,
-    { product },
+    product,
     null,
     "Update Product Successful"
   );
@@ -187,6 +187,7 @@ productController.deleteProduct = catchAsync(async (req, res, next) => {
     { new: true }
   );
 
+  const count = await Product.countDocuments({ isDeleted: false });
   if (!product)
     throw new AppError(400, "Product not found", "Delete Product Error");
   //Response
@@ -194,7 +195,7 @@ productController.deleteProduct = catchAsync(async (req, res, next) => {
     res,
     200,
     true,
-    { product },
+    { product, count },
     null,
     "Delete Product Successful"
   );

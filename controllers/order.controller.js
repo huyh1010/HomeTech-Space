@@ -52,13 +52,16 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
 
-  const filterConditions = [
-    {
-      is_Cancel: false,
-    },
-  ];
+  const filterConditions = [];
   if (filter.id) {
     filterConditions.push({ _id: filter.id });
+  } else if (filter.status) {
+    filterConditions.push({ status: filter.status });
+  } else if (filter.payment_status) {
+    filterConditions.push({ payment_status: filter.payment_status });
+  }
+  if (filter.name) {
+    filterConditions.push({ name: filter.name });
   }
   const filterCriteria = filterConditions.length
     ? { $and: filterConditions }
@@ -72,11 +75,7 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
     .sort({ createdAt: -1 })
     .skip(offset)
     .limit(limit)
-    .populate("buyer")
-    .populate({
-      path: "productList",
-      populate: { path: "productId", model: "Product" },
-    });
+    .populate("buyer");
 
   return sendResponse(res, 200, true, { orders, totalPages, count }, null, "");
 });
@@ -146,7 +145,7 @@ orderController.updateOrder = catchAsync(async (req, res, next) => {
   if (user.role !== "admin")
     throw new AppError(400, "Permission required", "Update Order Error");
   //Process
-  let order = await Order.findById(orderId);
+  let order = await Order.findById(orderId).populate("buyer");
   if (!order) throw new AppError(400, "Order not found", "Update Order Error");
   if (order.status === "shipped") {
     if (
@@ -169,14 +168,7 @@ orderController.updateOrder = catchAsync(async (req, res, next) => {
   order = await order.save();
 
   //Response
-  sendResponse(
-    res,
-    200,
-    true,
-    { order },
-    null,
-    "Update Order Status Successful"
-  );
+  sendResponse(res, 200, true, order, null, "Update Order Status Successful");
 });
 
 orderController.cancelOrder = catchAsync(async (req, res, next) => {
