@@ -48,21 +48,22 @@ orderController.createOrder = catchAsync(async (req, res, next) => {
 });
 
 orderController.getOrders = catchAsync(async (req, res, next) => {
-  let { page, limit, ...filter } = { ...req.query };
+  let { page, limit, ...filter } = {
+    ...req.query,
+  };
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
 
   const filterConditions = [];
-  if (filter.id) {
-    filterConditions.push({ _id: filter.id });
-  } else if (filter.status) {
-    filterConditions.push({ status: filter.status });
-  } else if (filter.payment_status) {
-    filterConditions.push({ payment_status: filter.payment_status });
+  if (filter) {
+    const filterKeys = Object.keys(filter);
+    filterKeys.forEach((key) => {
+      filterConditions.push({
+        [key]: filter[key],
+      });
+    });
   }
-  if (filter.name) {
-    filterConditions.push({ name: filter.name });
-  }
+
   const filterCriteria = filterConditions.length
     ? { $and: filterConditions }
     : {};

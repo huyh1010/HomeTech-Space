@@ -23,7 +23,6 @@ cartController.createCart = catchAsync(async (req, res, next) => {
 cartController.updateCart = catchAsync(async (req, res, next) => {
   const userId = req.params.id;
   const cartItems = req.body.cartOnLocal;
-  console.log(cartItems);
 
   let cart = await Cart.findOne({ user: userId });
   if (!cart) throw new AppError(400, "Cart not found", "Update Cart Error");
