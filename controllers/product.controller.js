@@ -1,5 +1,7 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
+const Category = require("../models/Category");
 const Product = require("../models/Product");
+
 const User = require("../models/User");
 
 const productController = {};
@@ -28,13 +30,16 @@ productController.getProducts = catchAsync(async (req, res, next) => {
         }
       } else if (
         key === "name" ||
-        key === "category" ||
         key === "brand" ||
         key === "dimension_size" ||
         key === "description"
       ) {
         filterConditions.push({
           [key]: { $regex: `${filter[key]}`, $options: "i" },
+        });
+      } else if (key === "category") {
+        filterConditions.push({
+          [key]: filter[key],
         });
       }
     });
@@ -51,7 +56,8 @@ productController.getProducts = catchAsync(async (req, res, next) => {
   let products = await Product.find(filterCriteria)
     .sort({ createdAt: -1 })
     .skip(offset)
-    .limit(limit);
+    .limit(limit)
+    .populate("category");
 
   return sendResponse(
     res,
@@ -90,16 +96,16 @@ productController.createProduct = catchAsync(async (req, res, next) => {
   //Process
 
   product = await Product.create({
-    name,
-    price,
-    category,
-    brand,
-    dimension_size,
-    weight_kg,
-    description,
-    poster_path,
-    imageUrl,
-    features,
+    name: name,
+    price: price,
+    category: category,
+    brand: brand,
+    dimension_size: dimension_size,
+    weight_kg: weight_kg,
+    description: description,
+    poster_path: poster_path,
+    imageUrl: imageUrl,
+    features: features,
   });
   //Response
   sendResponse(res, 200, true, { product }, null, "Create Product Successful");
@@ -108,7 +114,7 @@ productController.createProduct = catchAsync(async (req, res, next) => {
 productController.getSingleProduct = catchAsync(async (req, res, next) => {
   //Get data from request
   const productId = req.params.id;
-  const product = await Product.findById(productId);
+  const product = await Product.findById(productId).populate("category");
 
   //Validation
   if (!product)
@@ -135,6 +141,7 @@ productController.updateProduct = catchAsync(async (req, res, next) => {
   const user = await User.findById(currentUserId);
   if (user.role !== "admin")
     throw new AppError(400, "Permission required", "Update Product Error");
+
   //Process
   let product = await Product.findById(productId);
   if (!product)
@@ -160,7 +167,7 @@ productController.updateProduct = catchAsync(async (req, res, next) => {
 
   await product.save();
 
-  //Response
+  Response;
   return sendResponse(
     res,
     200,

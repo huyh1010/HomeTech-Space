@@ -25,16 +25,7 @@ router.post(
   validators.validate([
     body("name", "Invalid name").exists().notEmpty(),
     body("price", "Invalid price").exists().notEmpty(),
-    body("category", "Invalid Category")
-      .exists()
-      .isIn([
-        "speaker",
-        "plugs and outlets",
-        "security cameras and systems",
-        "lighting",
-        "alarm clock",
-        "scale",
-      ]),
+    body("category").exists().isString().custom(validators.checkObjectId),
   ]),
   productController.createProduct
 );

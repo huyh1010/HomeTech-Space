@@ -1,21 +1,11 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const productSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
-    category: {
-      type: String,
-      required: true,
-      enum: [
-        "speaker",
-        "plugs and outlets",
-        "security cameras and systems",
-        "lighting",
-        "alarm clock",
-        "scale",
-      ],
-    },
+    category: { type: Schema.Types.ObjectId, ref: "Category" },
     brand: { type: String },
     dimension_size: { type: String },
     weight_kg: { type: Number },

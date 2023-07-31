@@ -54,8 +54,7 @@ categoryController.getCategories = catchAsync(async (req, res, next) => {
   let categories = await Category.find(filterCriteria)
     .sort({ createdAt: -1 })
     .skip(offset)
-    .limit(limit)
-    .populate("products");
+    .limit(limit);
 
   return sendResponse(
     res,
