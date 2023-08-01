@@ -97,25 +97,39 @@ productBundleController.updateProductBundle = catchAsync(
     const currentUserId = req.user_id;
     const bundleId = req.params.id;
     //Get data from request
-    const { name, products, price } = req.body;
+
     //Validation
     const user = await User.findById(currentUserId);
     if (user.role !== "admin")
       throw new AppError(400, "Permission required", "Update Bundle Error");
 
     //Process
-    const bundle = await ProductBundle.findOneAndUpdate(
-      { _id: bundleId },
-      { name: name, products: products, price: price },
-      { new: true }
-    );
+    let bundle = await ProductBundle.findById(bundleId);
+    if (!bundle)
+      throw new AppError(400, "Product not found", "Update Product Error");
+    const allows = [
+      "name",
+      "price",
+      "products",
+      "description",
+      "poster_path",
+      "imageUrl",
+    ];
+
+    allows.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        bundle[field] = req.body[field];
+      }
+    });
+
+    await bundle.save();
 
     //Response
     return sendResponse(
       res,
       200,
       true,
-      { bundle },
+      bundle,
       null,
       "Update Product Bundle Successful"
     );

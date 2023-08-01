@@ -7,10 +7,10 @@ const User = require("../models/User");
 const productController = {};
 
 productController.getProducts = catchAsync(async (req, res, next) => {
-  let { page, limit, ...filter } = { ...req.query };
-  page = parseInt(page) || 1;
-  limit = parseInt(limit) || 12;
-
+  let { page, limit, ...filter } = req.query;
+  console.log(page, limit);
+  page = parseInt(page);
+  limit = parseInt(limit);
   const filterConditions = [{ isDeleted: false }];
 
   if (filter) {
@@ -50,6 +50,7 @@ productController.getProducts = catchAsync(async (req, res, next) => {
     : {};
 
   const count = await Product.countDocuments(filterCriteria);
+
   const totalPages = Math.ceil(count / limit);
   const offset = limit * (page - 1);
 
