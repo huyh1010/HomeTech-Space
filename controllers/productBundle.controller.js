@@ -31,7 +31,7 @@ productBundleController.createProductBundle = catchAsync(
     });
 
     //Response
-    sendResponse(res, 200, true, bundle, null, "Create Bundle Successful");
+    sendResponse(res, 200, true, { bundle }, null, "Create Bundle Successful");
   }
 );
 

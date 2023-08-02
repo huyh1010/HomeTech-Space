@@ -32,6 +32,48 @@ userController.register = catchAsync(async (req, res, next) => {
   );
 });
 
+userController.getUsers = catchAsync(async (req, res, next) => {
+  const currentUserId = req.user_id;
+  let { page, limit, ...filter } = req.query;
+
+  page = parseInt(page);
+  limit = parseInt(limit);
+  let user = await User.findById(currentUserId);
+  if (user.role !== "admin")
+    throw new AppError(400, "Permission required", "Create Product Error");
+
+  const filterConditions = [{ isDeleted: false }];
+  if (filter) {
+    const filterKeys = Object.keys(filter);
+    filterKeys.forEach((key) => {
+      filterConditions.push({ [key]: filter[key] });
+    });
+  }
+
+  const filterCriteria = filterConditions.length
+    ? { $and: filterConditions }
+    : {};
+
+  const totalUsers = await User.countDocuments(filterCriteria);
+
+  const totalPages = Math.ceil(totalUsers / limit);
+  const offset = limit * (page - 1);
+
+  const users = await User.find(filterCriteria)
+    .sort({ createdAt: -1 })
+    .skip(offset)
+    .limit(limit);
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { users, totalPages, totalUsers },
+    null,
+    "Get Users Successful"
+  );
+});
+
 userController.getCurrentUser = catchAsync(async (req, res, next) => {
   const currentUserId = req.user_id;
 

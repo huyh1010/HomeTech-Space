@@ -25,6 +25,14 @@ router.post(
 );
 
 /**
+ * @route GET /users
+ * @description Get All User
+ * @body
+ * @access admin only
+ */
+router.get("/", authentication.loginRequired, userController.getUsers);
+
+/**
  * @route GET /users/me
  * @description Get current user info
  * @body
