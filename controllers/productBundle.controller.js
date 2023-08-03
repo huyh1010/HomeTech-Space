@@ -152,12 +152,14 @@ productBundleController.deleteProductBundle = catchAsync(
       { isDeleted: true },
       { new: true }
     );
+
+    const count = await ProductBundle.countDocuments({ isDeleted: false });
     //Response
     return sendResponse(
       res,
       200,
       true,
-      { bundle },
+      { bundle, count },
       null,
       "Delete Product Bundle Successful"
     );

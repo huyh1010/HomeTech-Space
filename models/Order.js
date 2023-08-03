@@ -29,11 +29,11 @@ const orderSchema = mongoose.Schema(
         "preparing for shipment",
         "shipped",
         "delivered",
-        "canceled",
       ],
       default: "pending",
     },
     isDeleted: { type: Boolean, default: false },
+    is_Cancel: { type: Boolean, default: false },
     payment_status: {
       type: String,
       enum: ["unpaid", "paid"],

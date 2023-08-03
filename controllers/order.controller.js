@@ -51,10 +51,11 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
   let { page, limit, ...filter } = {
     ...req.query,
   };
+
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
 
-  const filterConditions = [];
+  const filterConditions = [{ is_Cancel: false }];
   if (filter) {
     const filterKeys = Object.keys(filter);
     filterKeys.forEach((key) => {
@@ -87,7 +88,7 @@ orderController.getUserOrder = catchAsync(async (req, res, next) => {
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
 
-  const filterConditions = [{ buyer: currentUserId }];
+  const filterConditions = [{ buyer: currentUserId }, { is_Cancel: false }];
   if (filter.id) {
     filterConditions.push({ _id: filter.id });
   }
@@ -174,17 +175,30 @@ orderController.updateOrder = catchAsync(async (req, res, next) => {
 
 orderController.cancelOrder = catchAsync(async (req, res, next) => {
   //Get data from request
+  const currentUserId = req.user_id;
+
   const orderId = req.params.id;
 
   //Validation
   const order = await Order.findOneAndUpdate(
     { _id: orderId },
-    { status: "canceled" },
+    { is_Cancel: true },
     { new: true }
   );
-  //Process
+
+  const count = await Order.countDocuments({
+    is_Cancel: false,
+    buyer: currentUserId,
+  });
 
   //Response
-  sendResponse(res, 200, true, order, null, "Cancel Order Successful");
+  sendResponse(
+    res,
+    200,
+    true,
+    { order, count },
+    null,
+    "Cancel Order Successful"
+  );
 });
 module.exports = orderController;
