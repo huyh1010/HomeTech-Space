@@ -7,7 +7,7 @@ const ShortUniqueId = require("short-unique-id");
 const orderController = {};
 
 orderController.createOrder = catchAsync(async (req, res, next) => {
-  const { customer_info, cart, user_id } = req.body;
+  const { customer_info, cart, user_id, totalPrice } = req.body;
   const {
     name,
     email,
@@ -28,6 +28,7 @@ orderController.createOrder = catchAsync(async (req, res, next) => {
     payment_method: payment_method,
     district: district,
     city: city,
+    totalPrice: totalPrice,
   });
   const orderId = order._id;
 
@@ -69,6 +70,7 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
     ? { $and: filterConditions }
     : {};
 
+  console.log(filterCriteria);
   const count = await Order.countDocuments(filterCriteria);
   const totalPages = Math.ceil(count / limit);
   const offset = limit * (page - 1);
@@ -80,6 +82,102 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
     .populate("buyer");
 
   return sendResponse(res, 200, true, { orders, totalPages, count }, null, "");
+});
+
+orderController.getOrderSales = catchAsync(async (req, res, next) => {
+  const currentUserId = req.user_id;
+  const user = await User.findById(currentUserId);
+  if (user.role !== "admin")
+    throw new AppError(400, "Permission required ", "Get Order Sales Error");
+
+  const day = 24 * 60 * 60 * 1000;
+  const past_7_days = 7 * day;
+  const past_30_days = 30 * day;
+  let order_last_7_days = await Order.aggregate([
+    {
+      $match: {
+        $expr: {
+          $gt: [
+            { $toDate: "$_id" },
+            { $toDate: { $subtract: [new Date(), past_7_days] } },
+          ],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          dateYMD: {
+            $dateFromParts: {
+              year: { $year: "$_id" },
+              month: { $month: "$_id" },
+              day: { $dayOfMonth: "$_id" },
+            },
+          },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { "_id.dateYMD": 1 },
+    },
+    {
+      $project: {
+        _id: 0,
+        count: 1,
+        dateDMY: {
+          $dateToString: { date: "$_id.dateYMD", format: "%d-%m-%Y" },
+        },
+      },
+    },
+  ]);
+  let order_last_30_days = await Order.aggregate([
+    {
+      $match: {
+        $expr: {
+          $gt: [
+            { $toDate: "$_id" },
+            { $toDate: { $subtract: [new Date(), past_30_days] } },
+          ],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          dateYMD: {
+            $dateFromParts: {
+              year: { $year: "$_id" },
+              month: { $month: "$_id" },
+              day: { $dayOfMonth: "$_id" },
+            },
+          },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { "_id.dateYMD": 1 },
+    },
+    {
+      $project: {
+        _id: 0,
+        count: 1,
+        dateDMY: {
+          $dateToString: { date: "$_id.dateYMD", format: "%d-%m-%Y" },
+        },
+      },
+    },
+  ]);
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { order_last_7_days, order_last_30_days },
+    null,
+    "Get  Order Sales Successful"
+  );
 });
 
 orderController.getUserOrder = catchAsync(async (req, res, next) => {

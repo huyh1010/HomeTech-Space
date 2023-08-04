@@ -19,7 +19,7 @@ const orderSchema = mongoose.Schema(
       required: true,
     },
 
-    total: { type: Number },
+    totalPrice: { type: Number },
     status: {
       type: String,
       enum: [

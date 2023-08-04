@@ -33,6 +33,14 @@ router.post(
 router.get("/", authentication.loginRequired, userController.getUsers);
 
 /**
+ * @route GET /users/data
+ * @description Get All User
+ * @body
+ * @access admin only
+ */
+router.get("/data", authentication.loginRequired, userController.getUserData);
+
+/**
  * @route GET /users/me
  * @description Get current user info
  * @body

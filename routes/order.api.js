@@ -33,6 +33,20 @@ router.post(
 router.get("/", authentication.loginRequired, orderController.getOrders);
 
 /**
+ * @route GET /orders/sales
+ * @description Get order sales per week
+ * @param
+ * @body
+ * @access Login required
+ */
+router.get(
+  "/sales",
+  authentication.loginRequired,
+
+  orderController.getOrderSales
+);
+
+/**
  * @route GET /orders/me
  * @description Get current user order
  * @param (user_id)
