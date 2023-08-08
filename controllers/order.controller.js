@@ -53,8 +53,8 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
     ...req.query,
   };
 
-  page = parseInt(page) || 1;
-  limit = parseInt(limit) || 10;
+  page = parseInt(page);
+  limit = parseInt(limit);
 
   const filterConditions = [{ is_Cancel: false }];
   if (filter) {
@@ -70,7 +70,6 @@ orderController.getOrders = catchAsync(async (req, res, next) => {
     ? { $and: filterConditions }
     : {};
 
-  console.log(filterCriteria);
   const count = await Order.countDocuments(filterCriteria);
   const totalPages = Math.ceil(count / limit);
   const offset = limit * (page - 1);

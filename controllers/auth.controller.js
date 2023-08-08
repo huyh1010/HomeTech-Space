@@ -1,14 +1,16 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const bcrypt = require("bcryptjs/dist//bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Cart = require("../models/Cart");
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const authController = {};
 
 authController.signIn = catchAsync(async (req, res, next) => {
   //Get data from request
   let { email, password, cart } = req.body;
-  console.log(cart);
+
   //Validation
   let user = await User.findOne({ email }, "+password");
   if (!user) throw new AppError(400, "Invalid Credentials", "Login Error");
@@ -49,6 +51,35 @@ authController.signIn = catchAsync(async (req, res, next) => {
   }
 
   //Response
+});
+
+authController.signInWithGoogle = catchAsync(async (req, res, next) => {
+  let { googleId } = req.body;
+  console.log(req.body);
+
+  jwt.verify(googleId, JWT_SECRET_KEY, (err, payload) => {
+    if (err) {
+      if (err.name === "JsonWebTokenError") {
+        throw new AppError(401, "Login Error", "Login with Google error");
+      }
+    }
+    googleId = payload._id;
+  });
+
+  let user = await User.findOne({ googleId: googleId });
+  if (!user) {
+    throw new AppError(401, "Login Error", "Login with Google error");
+  }
+
+  const accessToken = await user.generateToken();
+  sendResponse(
+    res,
+    200,
+    true,
+    { user, accessToken },
+    null,
+    "Log In Successful"
+  );
 });
 
 module.exports = authController;

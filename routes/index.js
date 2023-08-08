@@ -48,4 +48,7 @@ router.use("/orders", orderRouter);
 const cartRouter = require("./cart.api.js");
 router.use("/carts", cartRouter);
 
+const authPassportRouter = require("./authPassport.api.js");
+router.use("/auth/google", authPassportRouter);
+
 module.exports = router;

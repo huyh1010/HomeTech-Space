@@ -4,6 +4,10 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const passport = require("passport");
+const session = require("express-session");
+const passportSession = require("./passport/passport.session");
+const { AppError, sendResponse } = require("./helpers/utils");
 
 var indexRouter = require("./routes/index");
 
@@ -16,8 +20,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
+app.use(session(passportSession));
+app.use(passport.initialize());
+app.use(passport.session());
+
 const mongoose = require("mongoose");
-const { AppError, sendResponse } = require("./helpers/utils");
+
 const mongoURI = process.env.MONGODB_URI;
 
 mongoose
