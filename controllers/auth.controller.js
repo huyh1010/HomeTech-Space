@@ -49,13 +49,10 @@ authController.signIn = catchAsync(async (req, res, next) => {
       "Log In Successful"
     );
   }
-
-  //Response
 });
 
 authController.signInWithGoogle = catchAsync(async (req, res, next) => {
-  let { googleId } = req.body;
-  console.log(req.body);
+  let { googleId, cartForGoogleUser } = req.body;
 
   jwt.verify(googleId, JWT_SECRET_KEY, (err, payload) => {
     if (err) {
@@ -71,12 +68,23 @@ authController.signInWithGoogle = catchAsync(async (req, res, next) => {
     throw new AppError(401, "Login Error", "Login with Google error");
   }
 
+  let userCart = await Cart.findOne({ user: user._id }).populate("user");
+
+  if (!userCart) {
+    const userId = user._id;
+    userCart = await Cart.create({ user: userId });
+    userCart.cart = cartForGoogleUser;
+    await userCart.save();
+  } else {
+    userCart.cart = cartForGoogleUser;
+  }
+
   const accessToken = await user.generateToken();
   sendResponse(
     res,
     200,
     true,
-    { user, accessToken },
+    { user, accessToken, userCart },
     null,
     "Log In Successful"
   );

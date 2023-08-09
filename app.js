@@ -21,6 +21,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 app.use(session(passportSession));
+app.use(passport.authenticate("session"));
+
 app.use(passport.initialize());
 app.use(passport.session());
 

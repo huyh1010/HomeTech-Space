@@ -133,17 +133,18 @@ userController.getUserData = catchAsync(async (req, res, next) => {
 
 userController.getCurrentUser = catchAsync(async (req, res, next) => {
   const currentUserId = req.user_id;
+  console.log(currentUserId);
 
   const user = await User.findById(currentUserId);
   if (!user)
     throw new AppError(400, "User not found", "Get Current User Error");
 
-  const cart = await Cart.findOne({ user: currentUserId }).populate("user");
+  // const cart = await Cart.findOne({ user: currentUserId }).populate("user");
   return sendResponse(
     res,
     200,
     true,
-    { user, cart },
+    user,
     null,
     "Get Current User Successful"
   );
@@ -175,7 +176,7 @@ userController.updateUser = catchAsync(async (req, res, next) => {
   });
 
   await user.save();
-  return sendResponse(res, 200, true, { user }, null, "Update User Successful");
+  return sendResponse(res, 200, true, user, null, "Update User Successful");
 });
 
 module.exports = userController;
