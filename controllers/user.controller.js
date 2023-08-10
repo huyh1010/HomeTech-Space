@@ -133,7 +133,6 @@ userController.getUserData = catchAsync(async (req, res, next) => {
 
 userController.getCurrentUser = catchAsync(async (req, res, next) => {
   const currentUserId = req.user_id;
-  console.log(currentUserId);
 
   const user = await User.findById(currentUserId);
   if (!user)

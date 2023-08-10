@@ -6,7 +6,8 @@ const authentication = {};
 
 authentication.loginRequired = (req, res, next) => {
   try {
-    const tokenString = req.headers.authorization;
+    const tokenString = req?.headers?.authorization;
+
     if (!tokenString)
       throw new AppError(401, "Login required", "Authentication Error");
 
@@ -20,6 +21,7 @@ authentication.loginRequired = (req, res, next) => {
         }
       }
       req.user_id = payload._id;
+      console.log(req.user_id);
     });
     next();
   } catch (error) {
