@@ -52,7 +52,7 @@ authController.signIn = catchAsync(async (req, res, next) => {
 });
 
 authController.signInWithGoogle = catchAsync(async (req, res, next) => {
-  let { googleId, cartForGoogleUser } = req.body;
+  let { googleId, cart } = req.body;
 
   jwt.verify(googleId, JWT_SECRET_KEY, (err, payload) => {
     if (err) {
@@ -73,10 +73,10 @@ authController.signInWithGoogle = catchAsync(async (req, res, next) => {
   if (!userCart) {
     const userId = user._id;
     userCart = await Cart.create({ user: userId });
-    userCart.cart = cartForGoogleUser;
+    userCart.cart = cart;
     await userCart.save();
   } else {
-    userCart.cart = cartForGoogleUser;
+    userCart.cart = cart;
   }
 
   const accessToken = await user.generateToken();
