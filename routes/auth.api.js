@@ -6,7 +6,7 @@ const { body } = require("express-validator");
 
 /**
  * @route POST /auth/login
- * @description Log in with username and password
+ * @description User sign in
  * @body {email, password}
  * @access Public
  */

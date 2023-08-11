@@ -9,7 +9,7 @@ const router = express.Router();
  * @route PUT /carts
  * @description Update cart
  * @body { id}
- * * @body { cart}
+ * * @body {cart}
  * @access Public
  */
 router.put(
@@ -36,7 +36,7 @@ router.post(
 
 /**
  * @route POST /carts/bundle
- * @description Add product bundle to cart
+ * @description Add product bundle to the cart
  * @body {product_id, quantity, type}
  * @access Public
  */

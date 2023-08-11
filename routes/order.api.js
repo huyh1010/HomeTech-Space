@@ -8,7 +8,7 @@ const router = express.Router();
 /**
  * @route POST /orders
  * @description Create an order
- * @body {name, email, phone, district, city, buyer, shipping address, payment method, cart}
+ * @body { customer_info, cart, user_id, totalPrice }
  * @access Login required
  */
 router.post(
@@ -47,7 +47,7 @@ router.get(
 );
 
 /**
- * @route GET /orders/me
+ * @route GET /orders/user/:user_id
  * @description Get current user order
  * @param (user_id)
  * @access Login required

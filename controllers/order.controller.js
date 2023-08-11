@@ -49,9 +49,13 @@ orderController.createOrder = catchAsync(async (req, res, next) => {
 });
 
 orderController.getOrders = catchAsync(async (req, res, next) => {
+  const currentUserId = req.user_id;
   let { page, limit, ...filter } = {
     ...req.query,
   };
+  const user = await User.findById(currentUserId);
+  if (user.role !== "admin")
+    throw new AppError(400, "Permission required", "Get Orders Error");
 
   page = parseInt(page);
   limit = parseInt(limit);

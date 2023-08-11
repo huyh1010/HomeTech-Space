@@ -8,7 +8,7 @@ const router = express.Router();
 /**
  * @route POST /bundles
  * @description Create a product bundle
- * @body {name}
+ * @body {name, products, description, poster_path, price, imageUrl}
  * @access Login required, admin only
  */
 router.post(
@@ -44,7 +44,7 @@ router.get(
  * @route PUT /bundles/:id
  * @description Update product bundle
  * @param {id}
- * @body {name, products}
+ * @body {name, products, description, poster_path, price, imageUrl}
  * @access Login required, admin only
  */
 router.put(

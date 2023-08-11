@@ -7,7 +7,7 @@ const userController = {};
 
 userController.register = catchAsync(async (req, res, next) => {
   //Get data from request
-  let { name, email, password, role, cart } = req.body;
+  let { name, email, password, cart } = req.body;
   //Validation
   let user = await User.findOne({ email });
   if (user)
@@ -15,7 +15,7 @@ userController.register = catchAsync(async (req, res, next) => {
   //Process
   const salt = await bcrypt.genSalt(10);
   password = await bcrypt.hash(password, salt);
-  user = await User.create({ name, email, password, role });
+  user = await User.create({ name, email, password });
   let userCart = await Cart.create({ user: user._id });
   userCart.cart = cart;
   await userCart.save();

@@ -8,7 +8,7 @@ const authentication = require("../middleware/authentication");
 /**
  * @route POST /users
  * @description Register new user
- * @body {name, email, password}
+ * @body {name, email, password, cart}
  * @access Public
  */
 router.post(
@@ -26,7 +26,7 @@ router.post(
 
 /**
  * @route GET /users
- * @description Get All User
+ * @description Get All Users
  * @body
  * @access admin only
  */
@@ -34,7 +34,7 @@ router.get("/", authentication.loginRequired, userController.getUsers);
 
 /**
  * @route GET /users/data
- * @description Get All User
+ * @description Get Users' Data
  * @body
  * @access admin only
  */
@@ -54,21 +54,21 @@ router.get(
   userController.getCurrentUser
 );
 
-/**
- * @route GET /users/:id
- * @description Get user info
- * @body
- * @access Login required
- */
+// /**
+//  * @route GET /users/:id
+//  * @description Get user info
+//  * @body
+//  * @access Login required
+//  */
 
-router.get(
-  "/:id",
-  authentication.loginRequired,
-  validators.validate([
-    param("id").exists().isString().custom(validators.checkObjectId),
-  ]),
-  userController.getUser
-);
+// router.get(
+//   "/:id",
+//   authentication.loginRequired,
+//   validators.validate([
+//     param("id").exists().isString().custom(validators.checkObjectId),
+//   ]),
+//   userController.getUser
+// );
 
 /**
  * @route PUT /users/:id

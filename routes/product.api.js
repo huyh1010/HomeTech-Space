@@ -16,7 +16,7 @@ router.get("/", productController.getProducts);
 /**
  * @route POST /products
  * @description Create a new product
- * @body {name, price, category, brand, dimension/size, weight, description, imageUrl, key features}
+ * @body {name, price, category, brand, dimension/size, weight, description, imageUrl, key features, poster_path}
  * @access Login required, admin only
  */
 router.post(
@@ -48,7 +48,7 @@ router.get(
  * @route PUT /products/:id
  * @description Update a product.
  * @param {id}
- * @body {name, price, category, brand, dimension/size, weight_kg, description, imageUrl, key features}
+ * @body {name, price, category, brand, dimension/size, weight_kg, description, imageUrl, key features, poster_path}
  * @access Login required, admin only
  */
 router.put(

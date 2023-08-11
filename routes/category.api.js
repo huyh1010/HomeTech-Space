@@ -8,7 +8,7 @@ const router = express.Router();
 /**
  * @route POST /categories
  * @description Create a list of categories
- * @body {name}
+ * @body {name, coverImgUrl}
  * @access Login required, admin only
  */
 router.post(
@@ -39,7 +39,7 @@ router.get("/", categoryController.getCategories);
 
 /**
  * @route GET /categories/:id
- * @description Get single category
+ * @description Get a single category
  * @param {id}
  * @body
  * @access Public

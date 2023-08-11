@@ -49,8 +49,6 @@ productController.getProducts = catchAsync(async (req, res, next) => {
     ? { $and: filterConditions }
     : {};
 
-  console.log(filterCriteria);
-
   const count = await Product.countDocuments(filterCriteria);
 
   const totalPages = Math.ceil(count / limit);
