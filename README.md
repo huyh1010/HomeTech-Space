@@ -20,7 +20,7 @@
 
 • This application also provides a webpage feature which display a list of grouping products (from different category) in a bundle (product combo or package) at a reasonable price to allow the user to select and purchase without having to browse through other product webpage based on their category.
 
-• This application also contains a simple chat box between users to interact. 
+• This application also contains a simple chat box between users to interact.
 
 • An integration with third-party login providers (Google & Facebook) is included in the application.
 
@@ -100,12 +100,6 @@
 
 • [ ] As a user with role 'admin', I can update the status of the order.
 
-### Payment
-
-• [ ] As a user, I can see the payment status and amount.
-
-• [ ] As a user with role admin, I can update the status of payment.
-
 ## API endpoints
 
 ### Auth APIs
@@ -113,7 +107,7 @@
 ```javascript
 /**
  * @route POST /auth/login
- * @description Log in with username and password
+ * @description User sign in, create a cart for user if they don't have one
  * @body {email, password}
  * @access Public
  */
@@ -124,9 +118,27 @@
 ```javascript
 /**
  * @route POST /users
- * @description Register new user
- * @body {name, email, password}
+ * @description Register new user and create a cart for user
+ * @body {name, email, password, cart}
  * @access Public
+ */
+```
+
+```javascript
+/**
+ * @route GET /users
+ * @description Get All Users
+ * @body
+ * @access admin only
+ */
+```
+
+```javascript
+/**
+ * @route GET /users/data
+ * @description Get Users' Data
+ * @body
+ * @access admin only
  */
 ```
 
@@ -139,12 +151,10 @@
  */
 ```
 
-### Product APIs
-
 ```javascript
 /**
- * @route GET /products
- * @description Get a list of products
+ * @route GET /users/me
+ * @description Get current user info
  * @body
  * @access Login required
  */
@@ -152,9 +162,39 @@
 
 ```javascript
 /**
+ * @route GET /users/:id
+ * @description Get user info
+ * @body
+ * @access Login required
+ */
+```
+
+```javascript
+/**
+ * @route PUT /users/:id
+ * @description Update user info
+ * @param {id}
+ * @body {name, avatarUrl, address, phone}
+ * @access Login required
+ */
+```
+
+### Product APIs
+
+```javascript
+/**
+ * @route GET /products
+ * @description Get a list of products
+ * @body
+ * @access Public
+ */
+```
+
+```javascript
+/**
  * @route POST /products
  * @description Create a new product
- * @body {name, price, category, brand, dimension/size, weight, description, imageUrl, key features}
+ * @body {name, price, category, brand, dimension/size, weight, description, imageUrl, key features, poster_path}
  * @access Login required, admin only
  */
 ```
@@ -164,7 +204,7 @@
  * @route GET /products/:id
  * @description Get a single product by ID.
  * @param {id}
- * @access Login required
+ * @access Public
  */
 ```
 
@@ -173,7 +213,7 @@
  * @route PUT /products/:id
  * @description Update a product.
  * @param {id}
- * @body {name, price, category, brand, dimension/size, weight, description, imageUrl, key features}
+ * @body {name, price, category, brand, dimension/size, weight_kg, description, imageUrl, key features, poster_path}
  * @access Login required, admin only
  */
 ```
@@ -193,7 +233,7 @@
 /**
  * @route POST /bundles
  * @description Create a product bundle
- * @body {name, products, imageUrl, description}
+ * @body {name, products, description, poster_path, price, imageUrl}
  * @access Login required, admin only
  */
 ```
@@ -203,7 +243,7 @@
  * @route GET /bundles
  * @description get all bundles
  * @body
- * @access Login required
+ * @access Public
  */
 ```
 
@@ -212,7 +252,7 @@
  * @route GET /bundles/:id
  * @description Get a single bundle by ID.
  * @param {id}
- * @access Login required
+ * @access Public
  */
 ```
 
@@ -221,7 +261,7 @@
  * @route PUT /bundles/:id
  * @description Update product bundle
  * @param {id}
- * @body {name, products, imageUrl, description}
+ * @body {name, products, description, poster_path, price, imageUrl}
  * @access Login required, admin only
  */
 ```
@@ -241,7 +281,7 @@
 /**
  * @route POST /categories
  * @description Create a list of categories
- * @body {name, products}
+ * @body {name, coverImgUrl}
  * @access Login required, admin only
  */
 ```
@@ -249,19 +289,19 @@
 ```javascript
 /**
  * @route GET /categories
- * @description Create a list of categories
+ * @description Get all categories
  * @body
- * @access Login required
+ * @access Public
  */
 ```
 
 ```javascript
 /**
  * @route GET /categories/:id
- * @description Get single category (*note: with arrays of products)
+ * @description Get a single category
  * @param {id}
  * @body
- * @access Login required
+ * @access Public
  */
 ```
 
@@ -270,7 +310,7 @@
  * @route PUT /categories/:id
  * @description Update a single category by name
  * @param {id}
- * @body {name}
+ * @body {name, coverImgUrl}
  * @access Login required, admin only
  */
 ```
@@ -285,13 +325,25 @@
  */
 ```
 
+### Cart APIs
+
+```javascript
+/**
+ * @route PUT /carts
+ * @description Update cart
+ * @body { id}
+ * * @body {cart}
+ * @access Public
+ */
+```
+
 ### Order APIs
 
 ```javascript
 /**
  * @route POST /orders
  * @description Create an order
- * @body {buyer, products, shipping address, payment method, status}
+ * @body { customer_info, cart, user_id, totalPrice }
  * @access Login required
  */
 ```
@@ -302,6 +354,25 @@
  * @description Get all orders
  * @body
  * @access Login required, admin only
+ */
+```
+
+```javascript
+/**
+ * @route GET /orders/sales
+ * @description Get order sales per week
+ * @param
+ * @body
+ * @access Login required
+ */
+```
+
+```javascript
+/**
+ * @route GET /orders/user/:user_id
+ * @description Get current user order
+ * @param (user_id)
+ * @access Login required
  */
 ```
 
@@ -320,7 +391,7 @@
  * @route PUT /orders/:id
  * @description Update an order
  * @param {id}
- * @body {status}
+ * @body {status, payment_status}
  * @access Login required, admin only
  */
 ```
@@ -330,62 +401,11 @@
  * @route DELETE /orders/:id
  * @description Cancel an order
  * @param {id}
- * @body {status}
- * @access Login required
- */
-```
-
-### Payment APIs
-
-```javascript
-/**
- * @route POST /payments
- * @description Create a payment
- * @body {order, status}
- * @access Login required, admin only
- */
-```
-
-```javascript
-/**
- * @route GET /payments
- * @description Get all payment
  * @body
  * @access Login required
- */
-```
-
-```javascript
-/**
- * @route GET /payments/:id
- * @description Get a payment
- * @param {id}
- * @body
- * @access Login required
- */
-```
-
-```javascript
-/**
- * @route PUT /payments/:id
- * @description Update payment status
- * @param {id}
- * @body {status}
- * @access Login required, admin only
- */
-```
-
-```javascript
-/**
- * @route DELETE /payments/:id
- * @description Delete a payment
- * @param {id}
- * @body
- * @access Login required, admin only
  */
 ```
 
 ## Entity Relationship Diagram
 
-![Entity Relationship Diagram (2)  MConverter eu](https://github.com/huyh1010/HomeTech-Space/assets/117617750/b44b2ff7-d6e0-4057-acb3-b9aceba73066)
-
+![erd](https://github.com/huyh1010/HomeTech-Space/assets/117617750/159d56d7-fc96-4e51-a643-1b96cb5ea948)

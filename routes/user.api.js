@@ -54,21 +54,21 @@ router.get(
   userController.getCurrentUser
 );
 
-// /**
-//  * @route GET /users/:id
-//  * @description Get user info
-//  * @body
-//  * @access Login required
-//  */
+/**
+ * @route GET /users/:id
+ * @description Get user info
+ * @body
+ * @access Login required
+ */
 
-// router.get(
-//   "/:id",
-//   authentication.loginRequired,
-//   validators.validate([
-//     param("id").exists().isString().custom(validators.checkObjectId),
-//   ]),
-//   userController.getUser
-// );
+router.get(
+  "/:id",
+  authentication.loginRequired,
+  validators.validate([
+    param("id").exists().isString().custom(validators.checkObjectId),
+  ]),
+  userController.getUser
+);
 
 /**
  * @route PUT /users/:id
