@@ -24,7 +24,8 @@ router.get(
 router.get(
   "/callback",
   passport.authenticate("google", {
-    failureRedirect: "/auth/google/login/error",
+    failureRedirect:
+      "https://hometech-space-backend.onrender.com/auth/google/login/error",
   }),
   redirectToClient
 );

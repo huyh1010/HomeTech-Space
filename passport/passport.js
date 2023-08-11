@@ -24,7 +24,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL:
+        "https://hometech-space-backend.onrender.com/auth/google/callback",
       scope: ["profile"],
     },
     async function (accessToken, refreshToken, profile, cb) {
