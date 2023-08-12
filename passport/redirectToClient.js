@@ -6,7 +6,7 @@ const redirectToClient = catchAsync(async (req, res, next) => {
   let googleId = req.user.googleId;
   googleId = jwt.sign({ _id: googleId }, JWT_SECRET_KEY);
   res.redirect(
-    `https://hometech-space-huy-huynh.onrender.com?googleId=${googleId}`
+    `https://hometech-space-huyhuynh.netlify.app?googleId=${googleId}`
   );
 });
 
