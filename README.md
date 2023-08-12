@@ -113,6 +113,40 @@
  */
 ```
 
+### AuthPassport APIs (for Google Sign in)
+
+```javascript
+/**
+ * @route GET /auth/google
+ * @description Direct to google page
+ 
+ */
+```
+
+```javascript
+/**
+ * @route GET /auth/google/callback
+ * @description Receive user info from Google's response
+ 
+ */
+```
+
+```javascript
+/**
+ * @route GET /auth/google/login/success
+ * @description Get user's info after logging in by Google
+ 
+ */
+```
+
+```javascript
+/**
+ * @route GET /auth/google/login/error
+ * @description Response if failed to login to Google
+ 
+ */
+```
+
 ### User APIs
 
 ```javascript

@@ -25,7 +25,7 @@ router.get(
   "/callback",
   passport.authenticate("google", {
     failureRedirect:
-      "https://hometech-space-huyhuynh.netlify.app/auth/google/login/error",
+      "https://hometech-space-backend.onrender.com/auth/google/login/error",
   }),
   redirectToClient
 );
