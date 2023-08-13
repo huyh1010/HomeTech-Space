@@ -99,6 +99,9 @@ orderController.getOrderSales = catchAsync(async (req, res, next) => {
   let order_last_7_days = await Order.aggregate([
     {
       $match: {
+        is_Cancel: false,
+      },
+      $match: {
         $expr: {
           $gt: [
             { $toDate: "$_id" },
@@ -136,6 +139,9 @@ orderController.getOrderSales = catchAsync(async (req, res, next) => {
   ]);
   let order_last_30_days = await Order.aggregate([
     {
+      $match: {
+        is_Cancel: false,
+      },
       $match: {
         $expr: {
           $gt: [
