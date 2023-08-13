@@ -10,97 +10,98 @@
 
 # Hometech Space - Smart Home Electronic E-Commerce MERN stack
 
-## Application Description
+# Table of contents
 
-• This application offers a wide range of affordable smart home devices products at the moment where electronic equipments are unaffordable out of reach for the majority of consumers.
+1. [Introduction](#introduction)
+2. [Installation](#installation)
+3. [API endpoints](#api)
+4. [Entity Relationship Diagram](#erd)
 
-• It is designed to help people buy electronic goods at a low-cost price. The application predominantly specializes in smart home devices only which allow customers to find these products easily without having to search the key term "smart home devices" or "smart electronic home appliances" when they are browsing on a similar application. The application also offers a bundle options; customer can select these bundle which consists of multiple electronic products rather than select each product at a time.
+## <a name="Introduction">Introduction</a>
 
-• This application provides a list of home device products labeled and grouped based on their category. User will automatically see a displayed UI feature of the product categorization which helps enhance their shopping experience. In each category, the application also provide a filtering section based on the product specification (ex: price, brand name, size, dimension or weight...).
+• This Back End Application provides a RESTFUL API to suppport the <a href="https://github.com/huyh1010/HomeTech-Space-FE" target="_blank">HomeTech-Space Front End Application</a> with the following guidance: endpoints information (ex: description and instruction for each route) and an Entity RelationShip Diagram depicts the relationship between database schema.
 
-• This application also provides a webpage feature which display a list of grouping products (from different category) in a bundle (product combo or package) at a reasonable price to allow the user to select and purchase without having to browse through other product webpage based on their category.
+## <a name="Installation">Installation</a>
 
-• This application also contains a simple chat box between users to interact.
+To have this app running on your local computer, please follow the below steps:
 
-• An integration with third-party login providers (Google & Facebook) is included in the application.
+Clone repository
 
-• This application contains a data visualization for seller(admin) to track the product status.
+```javascript
+$ git clone https://github.com/huyh1010/HomeTech-Space.git
+```
 
-• While the HomeTech Space does provide a viable choice for user to browse through products, we hope to implement a "popular section" feature to allow customer to look at the platform's best-selling product. We also hope to build a customization webpage feature that allows user to select their product from scratch. While our bundle options does provide somewhat similar feature, the products in the bundle are pre-selected by the store and user are not allowed to adjust and select their own preferred product in the bundle. It would be amazing to also include a customer's review section for product reviews.
+Navigate to the project folder:
 
-## User Story
+```javascript
+$ cd HomeTech-Space
+```
 
-### Background
+Install project dependencies:
 
-• HomeTech Space is an electronic e-commerce site that allow customers to browse and purchase product of various categories offered. User should be able to explore the products based on the categories alongside with the filtering options that help narrow down user's ideal product.
+```javascript
+$ npm install
+```
 
-• (All users) should be able to sign up, log in, and log out of the market application with appropriate role.
+Set up environment variables (The following information can be found in the .env.example file):
 
-• (Each user) should be able to view the browse and view the product catalog and detail as a guest (without signing in). User can select the product with and add to cart without registering or signing in.
+![Screenshot 2023-08-13 105825](https://github.com/huyh1010/HomeTech-Space/assets/117617750/7982bd6e-3b6e-421a-ae8a-709a31415576)
 
-• (Registered user) should be able to browse through the product catalog, view product details, and add products to cart. Most importantly, they can also **check out securely with Cash On Delivery options, view order history, track order updates, and cancel orders**.
+PORT
 
-• (Only Admin) can create and manage (update, remove) product listings, including details such as title, description, price, and images ...etc.
+```javascript
+$ PORT = 8000
+```
 
-• Admin should receive order and update the delivery status of the order (triggers automated notifications to be sent to the customers).
+MONGODB_URI
 
-• Admin should have a dashboard page where they can view key information such as product inventory, total registered customers, total revenue...etc. They can also view and filter total orders by status.
+1. Install MongoDB Compass from <a href="https://www.mongodb.com/try/download/compass" target="_blank">here</a>
+2. Once you open Compass, an initial connection dialog appears:
+   ![Screenshot 2023-08-13 112104](https://github.com/huyh1010/HomeTech-Space/assets/117617750/85a6ed46-0d70-4fd7-a950-2d0fc7f9856d)
+3. In the URI, enter a connection string and click connect. For now, enter the following information for your connection string: mongodb://localhost:27017 (local database). Enter this string as the variable for MONGODB_URI:
 
-### Authentication
+```javascript
+$ MONGODB_URI = 'mongodb://localhost:27017'
+```
 
-• [ ] As a user, I can sign in with my email and password.
+JWT_SECRET_KEY (This can be anything)
 
-• [ ] As a user, I can register for a new account with email and password.
+Example:
 
-• [ ] As a user, I can stay signed in after refreshing the page.
+```javascript
+$ JWT_SECRET_KEY = 'fjkslaoq;ls'
+```
 
-### Users
+SECRET_SESSION_KEY (This can be anything)
 
-• [ ] As a user, I can see my current profile info (name, email address, password, and role).
+Example:
 
-• [ ] As a user, I can update my profile (Avatar, Address, Phone Number).
+```javascript
+$ SECRET_SESSION_KEY = 'fjkslaoq;ls'
+```
 
-### Products
+GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET
 
-• [ ] As a user, I can see a list of products
+The following variable allows user to sign in with Google and receive user information (ex: accessToken).
 
-• [ ] As a user, I can add a product to my cart.
+1. Navigate to <a href="https://www.balbooa.com/gridbox-documentation/how-to-get-google-client-id-and-client-secret" target="_blank">this web</a> and follow the instructions to attain **GOOGLE_CLIENT_ID** & **GOOGLE_CLIENT_SECRET**
+2. Once you have both the key, place it into these variables:
 
-• [ ] All products should contain information => name, description, price, and category.
+```javascript
+$ GOOGLE_CLIENT_ID = 'your google client ID'
+```
 
-• [ ] As a user with role 'admin', I can add a new product to the list.
+```javascript
+$ GOOGLE_CLIENT_SECRET = 'your google client secret'
+```
 
-• [ ] As a user with role 'admin', I can update and remove a product.
+Run the project:
 
-### Product Bundles
+```javascript
+$ npm run dev
+```
 
-• [ ] As a user, I can see a list of product bundles.
-
-• [ ] As a user with role 'admin', I can add a new bundle.
-
-• [ ] As a user with role 'admin', I can update or remove a bundle.
-
-### Categories
-
-• [ ] As a user, I can see a list of categories- contains products that are related to that category.
-
-• [ ] As a user with role 'admin', I can add a new category to the list.
-
-• [ ] As a user with role 'admin', I can update or remove category name.
-
-### Orders
-
-• [ ] As a user, I can check out my order
-
-• [ ] As a user, I can see my order information and status.
-
-• [ ] As a user, I can cancel my order.
-
-• [ ] As a user with role 'admin', I can see all orders.
-
-• [ ] As a user with role 'admin', I can update the status of the order.
-
-## API endpoints
+## <a name="api">API endpoints</a>
 
 ### Auth APIs
 
@@ -440,6 +441,6 @@
  */
 ```
 
-## Entity Relationship Diagram
+## <a name="erd">Entity Relationship Diagram</a>
 
 ![erd](https://github.com/huyh1010/HomeTech-Space/assets/117617750/159d56d7-fc96-4e51-a643-1b96cb5ea948)
