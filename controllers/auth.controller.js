@@ -20,13 +20,17 @@ authController.signIn = catchAsync(async (req, res, next) => {
   if (!isMatched) throw new AppError(400, "Wrong Password", "Login Error");
   if (user.role === "user") {
     let userCart = await Cart.findOne({ user: user._id }).populate("user");
-    userCart.cart = cart;
-    await userCart.save();
+
     if (!userCart) {
       const userId = user._id;
       userCart = await Cart.create({ user: userId });
       userCart.cart = cart;
       await userCart.save();
+    } else if (userCart) {
+      if (!userCart.cart.length) {
+        userCart.cart = cart;
+        await userCart.save();
+      }
     }
     const accessToken = await user.generateToken();
     //Response
@@ -74,9 +78,14 @@ authController.signInWithGoogle = catchAsync(async (req, res, next) => {
     const userId = user._id;
     userCart = await Cart.create({ user: userId });
     userCart.cart = cart;
+
     await userCart.save();
-  } else {
-    userCart.cart = cart;
+  } else if (userCart) {
+    if (!userCart.cart.length) {
+      userCart.cart = cart;
+
+      await userCart.save();
+    }
   }
 
   const accessToken = await user.generateToken();
