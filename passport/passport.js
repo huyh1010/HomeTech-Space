@@ -32,7 +32,7 @@ passport.use(
       try {
         let user = await User.findOne({ googleId: profile.id });
         if (user) {
-          cb(null, user);
+          cb(null, user); // goes on to the next stage - serializeUser
         } else {
           const newUser = {
             googleId: profile.id,
