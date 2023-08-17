@@ -106,9 +106,6 @@ orderController.getOrderSales = catchAsync(async (req, res, next) => {
           ],
         },
       },
-      $match: {
-        is_Cancel: false,
-      },
     },
     {
       $group: {
@@ -146,9 +143,6 @@ orderController.getOrderSales = catchAsync(async (req, res, next) => {
             { $toDate: { $subtract: [new Date(), past_30_days] } },
           ],
         },
-      },
-      $match: {
-        is_Cancel: false,
       },
     },
     {
