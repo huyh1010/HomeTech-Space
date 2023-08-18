@@ -100,9 +100,14 @@ orderController.getOrderSales = catchAsync(async (req, res, next) => {
     {
       $match: {
         $expr: {
-          $gt: [
-            { $toDate: "$_id" },
-            { $toDate: { $subtract: [new Date(), past_7_days] } },
+          $and: [
+            { $eq: ["$is_Cancel", false] },
+            {
+              $gt: [
+                { $toDate: "$_id" },
+                { $toDate: { $subtract: [new Date(), past_7_days] } },
+              ],
+            },
           ],
         },
       },
@@ -138,9 +143,14 @@ orderController.getOrderSales = catchAsync(async (req, res, next) => {
     {
       $match: {
         $expr: {
-          $gt: [
-            { $toDate: "$_id" },
-            { $toDate: { $subtract: [new Date(), past_30_days] } },
+          $and: [
+            { $eq: ["$is_Cancel", false] },
+            {
+              $gt: [
+                { $toDate: "$_id" },
+                { $toDate: { $subtract: [new Date(), past_30_days] } },
+              ],
+            },
           ],
         },
       },
