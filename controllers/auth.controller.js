@@ -86,7 +86,9 @@ authController.signInWithGoogle = catchAsync(async (req, res, next) => {
   } else if (userCart) {
     if (!userCart.cart.length) {
       userCart.cart = cart;
-
+      await userCart.save();
+    } else if (userCart.cart.length && cart.length) {
+      userCart.cart = cart;
       await userCart.save();
     }
   }
