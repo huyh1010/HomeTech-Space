@@ -30,6 +30,9 @@ authController.signIn = catchAsync(async (req, res, next) => {
       if (!userCart.cart.length) {
         userCart.cart = cart;
         await userCart.save();
+      } else if (userCart.cart.length && cart.length) {
+        userCart.cart = cart;
+        await userCart.save();
       }
     }
     const accessToken = await user.generateToken();
